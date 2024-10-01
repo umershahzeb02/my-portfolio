@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Josefin Sans', sans-serif;
+  background: rgba(255, 255, 255, 0);
+
+}
+
+.glow {
+  position: fixed; /* Use fixed positioning */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0);
+  transition: background 0.1s ease;
+}
+

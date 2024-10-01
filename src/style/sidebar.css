@@ -1,0 +1,25 @@
+
+  
+  .sidebar {
+    position: relative; /* Default position */
+    height: auto; /* Full viewport height */
+    color: #fff; /* Adjust text color */
+    overflow-y: auto; /* Allows sidebar content to scroll if it overflows */
+    z-index: 1000; /* Ensures the sidebar is above other content */
+  }
+  
+  @media (min-width: 950px) { /* For screens larger than 768px */
+    .sidebar {
+      position: fixed; /* Fixes the sidebar in place */
+    /* top: 0;
+    left: 0; */
+     width: 550px; /*Adjust the width as needed */
+    height: 100vh; /* Full viewport height */
+    /* background-color: #333; Adjust the background color as needed */
+    color: #fff; /* Adjust text color */
+    overflow-y: auto; /* Allows sidebar content to scroll if it overflows */
+    z-index: 1000; 
+    
+    }
+  }
+  
