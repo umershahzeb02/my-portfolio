@@ -266,8 +266,11 @@ function Experience() {
         {/* Role and employer share a line. items-baseline rather than items-center
             because the two sit at different sizes, and baselines are what the eye
             reads as level; centring would leave the smaller one floating. */}
-        <div className="mt-2 flex flex-wrap items-baseline gap-x-2.5">
+        <div className="mt-2 flex flex-wrap items-baseline gap-x-2">
           <h3 className="t-heading text-slate-100">{experience.role}</h3>
+          {/* Muted so it separates without competing, and aria-hidden so screen
+              readers do not announce "middle dot" between the two phrases. */}
+          <span className="t-body text-slate-600" aria-hidden="true">·</span>
           <p className="t-body text-slate-300">{experience.orgShort}</p>
         </div>
         <p className="t-body mt-1 text-sm text-slate-500">{experience.note}</p>
