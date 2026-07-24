@@ -2,13 +2,15 @@
 
 export const profile = {
   name: "Shahzeb Umer",
-  tagline: "The stack follows the problem.",
-  location: "Islamabad, Pakistan",
+  role: "Full Stack Developer",
   email: "umershahzeb@gmail.com",
   intro:
-    "I pick the stack to fit the problem rather than the other way round. So far that has meant browser internals, multimodal AI systems, production platforms at scale, and a fair amount of algorithmic work.",
-  secondary:
-    "The common thread is depth — going as far down as a problem actually requires instead of stopping at the framework.",
+    "I build production web applications end to end, and I pick the stack to fit the problem rather than the other way round.",
+  about: [
+    "I'm a full-stack engineer in Islamabad, currently at the Directorate of ICT at Allama Iqbal Open University, where I ship public and internal platforms for an institution serving 400,000+ students.",
+    "I pick the stack to fit the problem rather than the other way round. So far that has meant browser internals, multimodal AI systems, production platforms at scale, infrastructure, and a fair amount of algorithmic work. The common thread is depth — going as far down as a problem actually requires instead of stopping at the framework.",
+    "Outside work I write about browser internals and web architecture, and I'm always looking for the next unfamiliar problem.",
+  ],
 };
 
 export const links = {
@@ -66,7 +68,7 @@ export const work = [
 
 export const experience = {
   role: "Full Stack Developer",
-  org: "Directorate of ICT, Allama Iqbal Open University",
+  orgShort: "Directorate of ICT, AIOU",
   period: "Dec 2024 — Present",
   note: "A distance-learning institution serving 400,000+ students nationwide.",
   projects: [

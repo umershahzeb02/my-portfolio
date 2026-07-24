@@ -1,99 +1,69 @@
 @import "tailwindcss";
 
-/* Tailwind v4 is configured in CSS rather than a JS file — @theme entries become
-   real design tokens, so `bg-paper` or `font-display` exist as utilities without
-   a tailwind.config.js round-trip. */
+/* Type only. The palette stays with Tailwind's slate/teal defaults, which is
+   what the original design used. */
 @theme {
-  --font-display: "Instrument Serif", ui-serif, Georgia, serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-
-  --color-paper: #faf8f5;
-  --color-ink: #17150f;
-  --color-muted: #6d675c;
-  --color-faint: #9a948a;
-  --color-rule: #e4dfd5;
-  --color-accent: #a8502c;
-}
-
-/* Warm near-black rather than the usual blue-grey, so the dark theme reads as
-   the same paper turned down rather than as a different site.
-
-   These reassign the variables on :root — they are NOT a second @theme block.
-   @theme only registers tokens at the top level; nested inside a media query it
-   is hoisted, the media condition is dropped, and the dark values silently
-   overwrite the light ones, leaving the site permanently dark. Overriding the
-   emitted custom properties instead keeps the switch conditional. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-paper: #12110f;
-    --color-ink: #f2ede4;
-    --color-muted: #9d968a;
-    --color-faint: #6b655b;
-    --color-rule: #2a2723;
-    --color-accent: #e0793f;
-  }
 }
 
 @layer base {
-  html {
-    -webkit-text-size-adjust: 100%;
-  }
-
   body {
-    background: var(--color-paper);
-    color: var(--color-ink);
     font-family: var(--font-sans);
-    font-feature-settings: "kern", "liga";
+    /* cv11 gives Inter the single-storey a; ss01 the rounded quotes. Small
+       details, but they are what stop Inter looking like default system UI. */
+    font-feature-settings: "kern", "liga", "cv11", "ss01";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  ::selection {
-    background: var(--color-accent);
-    color: var(--color-paper);
-  }
-
   :focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid theme(--color-teal-300);
     outline-offset: 3px;
     border-radius: 2px;
   }
 }
 
-@layer components {
-  /* Tracking-heavy mono, used for every section label and metadata line. */
-  .eyebrow {
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--color-faint);
-  }
+/* Sidebar pinning, carried over from the original stylesheet. */
+.sidebar {
+  position: relative;
+  height: auto;
+  overflow-y: auto;
+  z-index: 1000;
+}
 
-  /* Underline that grows from the left on hover. Drawn as a background image so
-     it animates a compositor-friendly property rather than a layout one. */
-  .link-underline {
-    background-image: linear-gradient(var(--color-accent), var(--color-accent));
-    background-repeat: no-repeat;
-    background-position: 0 100%;
-    background-size: 0% 1px;
-    transition: background-size 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s;
-  }
-  .link-underline:hover {
-    background-size: 100% 1px;
-    color: var(--color-accent);
+@media (min-width: 950px) {
+  .sidebar {
+    position: fixed;
+    width: 550px;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
   }
 }
 
-/* Scroll reveal. Elements sit shifted and transparent until an
-   IntersectionObserver adds .is-visible — see useReveal in App.jsx. */
+.sidebar::-webkit-scrollbar {
+  width: 0;
+}
+
+/* Section-label rule that grows when its row is hovered. */
+.nav-line {
+  display: inline-block;
+  width: 2rem;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+.nav-item:hover .nav-line,
+.nav-item.active .nav-line {
+  width: 4rem;
+}
+
 .reveal {
   opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(14px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
   transition-delay: var(--reveal-delay, 0ms);
 }
 .reveal.is-visible {
@@ -101,8 +71,6 @@
   transform: none;
 }
 
-/* Motion here is decoration, never information — anyone who has asked the OS to
-   calm things down gets the final state immediately. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -116,7 +84,6 @@
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
