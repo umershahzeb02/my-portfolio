@@ -3,6 +3,11 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Space Grotesk shares the squared terminals and constructed feel of the
+     mono already carrying the labels, so headings read as part of the same
+     family of shapes. Against Inter's neutral body it gives the right column a
+     voice without introducing a serif, which would fight the rest. */
+  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
@@ -74,9 +79,12 @@
      its supporting copy. Grey body also gains line-height as it shrinks,
      because shorter lines need proportionally more leading to stay readable. */
   .t-heading {
+    font-family: var(--font-display);
     font-size: 1.125rem;
     font-weight: 600;
-    letter-spacing: -0.018em;
+    /* Space Grotesk is drawn wider and already fairly tight, so it needs far
+       less negative tracking than Inter did at the same size. */
+    letter-spacing: -0.006em;
     line-height: 1.35;
   }
 
