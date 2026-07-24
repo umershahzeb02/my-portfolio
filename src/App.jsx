@@ -263,8 +263,13 @@ function Experience() {
 
       <Reveal className="card -mx-4 p-4">
         <p className="t-meta text-slate-500">{experience.period}</p>
-        <h3 className="t-heading mt-2 text-slate-100">{experience.role}</h3>
-        <p className="t-body text-slate-300">{experience.orgShort}</p>
+        {/* Role and employer share a line. items-baseline rather than items-center
+            because the two sit at different sizes, and baselines are what the eye
+            reads as level; centring would leave the smaller one floating. */}
+        <div className="mt-2 flex flex-wrap items-baseline gap-x-2.5">
+          <h3 className="t-heading text-slate-100">{experience.role}</h3>
+          <p className="t-body text-slate-300">{experience.orgShort}</p>
+        </div>
         <p className="t-body mt-1 text-sm text-slate-500">{experience.note}</p>
 
         {/* Indented so the platforms sit beneath the role rather than beside it.
