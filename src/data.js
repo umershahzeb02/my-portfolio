@@ -2,14 +2,16 @@
 
 export const profile = {
   name: "Shahzeb Umer",
-  role: "Full Stack Developer",
+  // Deliberately not "Full Stack Developer" here. That is the job title and it
+  // belongs in Experience; as an identity line it binds the whole page to web.
+  tagline: "The stack follows the problem.",
   email: "umershahzeb@gmail.com",
   intro:
-    "I build production web applications end to end, and I pick the stack to fit the problem rather than the other way round.",
+    "Browser internals, multimodal AI, platforms at scale — and whatever the next problem turns out to need.",
   about: [
-    "I'm a full-stack engineer in Islamabad, currently at the Directorate of ICT at Allama Iqbal Open University, where I ship public and internal platforms for an institution serving 400,000+ students.",
+    "I'm a software engineer in Islamabad, currently at the Directorate of ICT at Allama Iqbal Open University, where I ship public and internal platforms for an institution serving 400,000+ students.",
     "I pick the stack to fit the problem rather than the other way round. So far that has meant browser internals, multimodal AI systems, production platforms at scale, infrastructure, and a fair amount of algorithmic work. The common thread is depth — going as far down as a problem actually requires instead of stopping at the framework.",
-    "Outside work I write about browser internals and web architecture, and I'm always looking for the next unfamiliar problem.",
+    "I write about browser internals, automation and web architecture, and I'm always looking for the next unfamiliar problem.",
   ],
 };
 
@@ -131,3 +133,41 @@ export const education = [
   },
   { school: "KIPS College", detail: "Pre-Engineering", period: "2019 — 2021" },
 ];
+
+/* Work outside the web stack. Kept on the page because the range is the point —
+   labelled honestly as part coursework rather than dressed up as production. */
+export const exploring = {
+  note: "Coursework and curiosity in roughly equal measure — public because the range is the point.",
+  items: [
+    {
+      name: "Genetic-algorithm timetable scheduling",
+      text: "Constraint satisfaction over a search space far too large to brute force.",
+      tech: "Python",
+      href: "https://github.com/umershahzeb02/Time-Table-Scheduling-with-Genetic-Algo--AI",
+    },
+    {
+      name: "Analysis of Algorithms",
+      text: "Comparing algorithmic strategies across problem classes.",
+      tech: "C++",
+      href: "https://github.com/umershahzeb02/Analysis-of-Algos-Project",
+    },
+    {
+      name: "The Quest for the Crystal Kingdom",
+      text: "A console game built on hand-rolled data structures — queues, lists, graphs.",
+      tech: "C++",
+      href: "https://github.com/umershahzeb02/Data-Structure-The-Quest-for-the-Crystal-Kingdom",
+    },
+    {
+      name: "Café Management System",
+      text: "Transaction-focused DBMS design on MS SQL Server.",
+      tech: "C#",
+      href: "https://github.com/umershahzeb02/Cafe-Management-System-DBMS",
+    },
+    {
+      name: "price-monitor-system",
+      text: "Scheduled price tracking and change detection.",
+      tech: "Python",
+      href: "https://github.com/umershahzeb02/price-monitor-system",
+    },
+  ],
+};

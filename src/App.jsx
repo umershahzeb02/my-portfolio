@@ -7,6 +7,7 @@ import {
   writing,
   stack,
   education,
+  exploring,
 } from "./data";
 import Socials from "./Socials";
 
@@ -15,6 +16,7 @@ const NAV = [
   ["Experience", "experience"],
   ["Projects", "projects"],
   ["Writing", "writing"],
+  ["Exploring", "exploring"],
 ];
 
 function useReveal() {
@@ -104,7 +106,7 @@ function Sidebar() {
     <header className="sidebar py-12 lg:py-20">
       <div>
         <h1 className="t-display text-slate-100">{profile.name}</h1>
-        <p className="t-role mt-4 text-slate-200">{profile.role}</p>
+        <p className="t-role mt-4 text-teal-300">{profile.tagline}</p>
         <p className="t-body mt-5 max-w-xs text-slate-400">{profile.intro}</p>
 
         <nav className="mt-16 hidden lg:block" aria-label="Sections">
@@ -301,10 +303,46 @@ function Writing() {
   );
 }
 
+function Exploring() {
+  return (
+    <section id="exploring" className="scroll-mt-24 pb-24" aria-label="Also exploring">
+      <SectionLabel index="05">Also exploring</SectionLabel>
+
+      <ul className="space-y-3">
+        {exploring.items.map((e, i) => (
+          <Reveal as="li" key={e.href} delay={i * 50}>
+            <a
+              href={e.href}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="card group/link -mx-4 block p-4"
+            >
+              <div className="flex items-baseline gap-3">
+                <span className="t-index text-slate-600">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="t-label text-slate-500">{e.tech}</span>
+              </div>
+              <h3 className="t-heading mt-1.5 text-slate-200 transition-colors duration-300 group-hover/link:text-teal-300">
+                {e.name} <Arrow />
+              </h3>
+              <p className="t-body mt-1 text-slate-400">{e.text}</p>
+            </a>
+          </Reveal>
+        ))}
+      </ul>
+
+      <Reveal className="mt-6 px-4 lg:px-0" delay={80}>
+        <p className="t-body text-sm text-slate-500">{exploring.note}</p>
+      </Reveal>
+    </section>
+  );
+}
+
 function Stack() {
   return (
     <section className="pb-24" aria-label="Stack">
-      <SectionLabel index="05">Stack</SectionLabel>
+      <SectionLabel index="06">Stack</SectionLabel>
       <dl className="space-y-5">
         {stack.map((row, i) => (
           <Reveal key={row.label} delay={i * 40}>
@@ -336,6 +374,7 @@ export default function App() {
           <Experience />
           <Projects />
           <Writing />
+          <Exploring />
           <Stack />
           <footer className="t-meta pb-16 text-slate-600">
             <p>Built with React, Tailwind CSS and Vite. Deployed on GitHub Pages.</p>
