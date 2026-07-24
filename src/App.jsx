@@ -267,10 +267,12 @@ function Experience() {
         <p className="t-body text-slate-300">{experience.orgShort}</p>
         <p className="t-body mt-1 text-sm text-slate-500">{experience.note}</p>
 
-        <ul className="mt-7 space-y-6">
+        {/* Indented so the platforms sit beneath the role rather than beside it.
+            Padding does the nesting on its own here, with no rule to lean on. */}
+        <ul className="mt-6 space-y-5 pl-5 sm:pl-7">
           {experience.projects.map((p) => (
             <li key={p.name}>
-              <h4 className="t-heading text-slate-200">
+              <h4 className="t-subheading text-slate-200">
                 {p.href ? (
                   <Out href={p.href}>
                     {p.name} <Arrow />

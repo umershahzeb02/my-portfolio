@@ -88,6 +88,17 @@
     line-height: 1.35;
   }
 
+  /* One step under .t-heading, for entries nested beneath a heading. Indenting
+     alone was not enough: the platforms sat at the same 18px as the role above
+     them, so they read as its siblings rather than its children. */
+  .t-subheading {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.004em;
+    line-height: 1.4;
+  }
+
   .t-body {
     font-size: 0.875rem;
     line-height: 1.72;
