@@ -60,6 +60,97 @@ function useActiveSection() {
   return active;
 }
 
+/* Pointer-tracked wash behind the content. Skipped entirely for coarse
+   pointers, where there is no cursor to follow, and for reduced motion.
+   Writes go through rAF so a fast mouse cannot outpace the paint. */
+function useSpotlight() {
+  useEffect(() => {
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const el = document.getElementById("spotlight");
+    if (!el) return;
+    let raf = 0;
+    const onMove = (e) => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        el.style.setProperty("--mx", `${e.clientX}px`);
+        el.style.setProperty("--my", `${e.clientY}px`);
+      });
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+}
+
+// Local time where he actually is, so "Islamabad" carries a bit of presence.
+function useLocalTime() {
+  const [time, setTime] = useState("");
+  useEffect(() => {
+    const read = () =>
+      new Intl.DateTimeFormat("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: "Asia/Karachi",
+      }).format(new Date());
+    setTime(read());
+    const id = setInterval(() => setTime(read()), 30000);
+    return () => clearInterval(id);
+  }, []);
+  return time;
+}
+
+/* Copying beats a mailto: for anyone not using a desktop mail client, which is
+   most people. Falls back to mailto: where the clipboard is unavailable. */
+function CopyEmail() {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(profile.email);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.location.href = `mailto:${profile.email}`;
+    }
+  };
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      className="t-link text-left text-slate-300 transition-colors duration-300 hover:text-teal-300"
+    >
+      <span aria-live="polite">{copied ? "Copied to clipboard" : profile.email}</span>
+    </button>
+  );
+}
+
+function ToTop() {
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShown(window.scrollY > 700);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return (
+    <button
+      type="button"
+      aria-label="Back to top"
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      className={`to-top bg-slate-800/80 text-slate-300 backdrop-blur hover:bg-teal-300 hover:text-teal-900 ${
+        shown ? "is-shown" : ""
+      }`}
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+        <path d="M12 19V5M5 12l7-7 7 7" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </button>
+  );
+}
+
 const Reveal = ({ delay = 0, className = "", as: Tag = "div", children }) => (
   <Tag className={`reveal ${className}`} style={{ "--reveal-delay": `${delay}ms` }}>
     {children}
@@ -101,6 +192,7 @@ const SectionLabel = ({ index, children }) => (
 
 function Sidebar() {
   const active = useActiveSection();
+  const time = useLocalTime();
 
   return (
     <header className="sidebar py-12 lg:py-20">
@@ -115,6 +207,7 @@ function Sidebar() {
               <li key={id}>
                 <a
                   href={`#${id}`}
+                  aria-current={active === id ? "true" : undefined}
                   className={`nav-item t-label ${
                     active === id
                       ? "is-active text-teal-300"
@@ -130,7 +223,18 @@ function Sidebar() {
       </div>
 
       <div className="mt-14 lg:mt-0 lg:pb-20">
-        <Socials />
+        <div className="flex items-center gap-2.5">
+          <span className="status-dot" aria-hidden="true" />
+          <p className="t-meta text-slate-500">
+            Islamabad{time ? ` · ${time} local` : ""}
+          </p>
+        </div>
+        <div className="mt-3">
+          <CopyEmail />
+        </div>
+        <div className="mt-6">
+          <Socials />
+        </div>
       </div>
     </header>
   );
@@ -270,7 +374,7 @@ function Writing() {
 
       <Reveal className="t-body mb-6 text-slate-400">
         <p>
-          On browser internals, automation, infrastructure and web architecture — at the{" "}
+          On browser internals, automation, infrastructure and web architecture, at the{" "}
           <Out href="https://bumbletap.com/blog" className="!inline">
             BumbleTap engineering blog
           </Out>{" "}
@@ -357,9 +461,11 @@ function Stack() {
 
 export default function App() {
   useReveal();
+  useSpotlight();
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-400 antialiased">
+    <div className="relative min-h-screen bg-slate-900 text-slate-400 antialiased">
+      <div id="spotlight" className="spotlight" aria-hidden="true" />
       <a
         href="#about"
         className="t-label sr-only focus:not-sr-only focus:absolute focus:left-6 focus:top-6 focus:z-50 focus:rounded focus:bg-teal-300 focus:px-3 focus:py-2 focus:text-teal-900"
@@ -367,7 +473,7 @@ export default function App() {
         Skip to content
       </a>
 
-      <div className="mx-auto grid w-full max-w-6xl gap-x-16 px-6 sm:px-10 lg:grid-cols-2 lg:px-16">
+      <div className="relative z-10 mx-auto grid w-full max-w-6xl gap-x-16 px-6 sm:px-10 lg:grid-cols-2 lg:px-16">
         <Sidebar />
         <main className="pt-4 lg:py-20">
           <About />
@@ -381,6 +487,8 @@ export default function App() {
           </footer>
         </main>
       </div>
+
+      <ToTop />
     </div>
   );
 }

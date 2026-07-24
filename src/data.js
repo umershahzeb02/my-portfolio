@@ -7,10 +7,10 @@ export const profile = {
   tagline: "The stack follows the problem.",
   email: "umershahzeb@gmail.com",
   intro:
-    "Browser internals, multimodal AI, platforms at scale — and whatever the next problem turns out to need.",
+    "Browser internals, multimodal AI, and platforms at scale. Whatever the next problem turns out to need.",
   about: [
     "I'm a software engineer in Islamabad, currently at the Directorate of ICT at Allama Iqbal Open University, where I ship public and internal platforms for an institution serving 400,000+ students.",
-    "I pick the stack to fit the problem rather than the other way round. So far that has meant browser internals, multimodal AI systems, production platforms at scale, infrastructure, and a fair amount of algorithmic work. The common thread is depth — going as far down as a problem actually requires instead of stopping at the framework.",
+    "I pick the stack to fit the problem rather than the other way round. So far that has meant browser internals, multimodal AI systems, production platforms at scale, infrastructure, and a fair amount of algorithmic work. The common thread is depth: going as far down as a problem actually requires instead of stopping at the framework.",
     "I write about browser internals, automation and web architecture, and I'm always looking for the next unfamiliar problem.",
   ],
 };
@@ -29,9 +29,9 @@ export const work = [
     domain: "Browser internals",
     year: "2025",
     summary:
-      "A Chrome extension that binds arbitrary keystrokes to DOM actions on any website — single-key bindings for element invocation, text entry and sandboxed user JavaScript, plus multi-step Auto-Actions with conditional branching, waits and variable extraction.",
+      "A Chrome extension that binds arbitrary keystrokes to DOM actions on any website. Single-key bindings cover element invocation, text entry and sandboxed user JavaScript, while multi-step Auto-Actions add conditional branching, waits and variable extraction.",
     detail:
-      "The hard problem is durability. Conventional CSS selectors break the moment a site redeploys, so the element resolver identifies targets by multi-representation consensus and traverses shadow DOM. Privileged execution spans Chrome's isolated, main and user-script worlds through a cross-world messaging bridge, which buys CORS-exempt requests without giving up a strictly client-side design — no backend, no telemetry.",
+      "The hard problem is durability. Conventional CSS selectors break the moment a site redeploys, so the element resolver identifies targets by multi-representation consensus and traverses shadow DOM. Privileged execution spans Chrome's isolated, main and user-script worlds through a cross-world messaging bridge, which buys CORS-exempt requests without giving up a strictly client-side design. No backend, no telemetry.",
     stack: ["Manifest V3", "JavaScript", "Next.js", "Cloudflare Workers & R2", "Vitest"],
     links: [
       { label: "bumbletap.com", href: "https://bumbletap.com" },
@@ -137,7 +137,7 @@ export const education = [
 /* Work outside the web stack. Kept on the page because the range is the point —
    labelled honestly as part coursework rather than dressed up as production. */
 export const exploring = {
-  note: "Coursework and curiosity in roughly equal measure — public because the range is the point.",
+  note: "Coursework and curiosity in roughly equal measure. Public because the range is the point.",
   items: [
     {
       name: "Genetic-algorithm timetable scheduling",
@@ -153,7 +153,7 @@ export const exploring = {
     },
     {
       name: "The Quest for the Crystal Kingdom",
-      text: "A console game built on hand-rolled data structures — queues, lists, graphs.",
+      text: "A console game built on hand-rolled data structures: queues, lists and graphs.",
       tech: "C++",
       href: "https://github.com/umershahzeb02/Data-Structure-The-Quest-for-the-Crystal-Kingdom",
     },

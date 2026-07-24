@@ -68,22 +68,28 @@
     line-height: 1.35;
   }
 
+  /* Heading against body sat at 17px over 16px, barely a step, so the two
+     read as one block of text. A modular scale wants a real interval: these
+     are roughly a major-third apart, which is the usual range for a title and
+     its supporting copy. Grey body also gains line-height as it shrinks,
+     because shorter lines need proportionally more leading to stay readable. */
   .t-heading {
-    font-size: 1.0625rem;
+    font-size: 1.125rem;
     font-weight: 600;
-    letter-spacing: -0.015em;
-    line-height: 1.4;
+    letter-spacing: -0.018em;
+    line-height: 1.35;
   }
 
   .t-body {
-    line-height: 1.75;
-    letter-spacing: 0.001em;
+    font-size: 0.875rem;
+    line-height: 1.72;
+    letter-spacing: 0.003em;
   }
 
   .t-lede {
-    font-size: 1.0625rem;
-    line-height: 1.8;
-    letter-spacing: -0.003em;
+    font-size: 1rem;
+    line-height: 1.75;
+    letter-spacing: -0.002em;
   }
 
   /* Mono labels. Uppercase at small sizes needs generous tracking or the
@@ -109,7 +115,7 @@
   /* Links sit in sentence case. Uppercase mono at this frequency turned every
      link into a shout and wrapped badly on narrow columns. */
   .t-link {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     font-weight: 500;
     letter-spacing: -0.006em;
   }
@@ -155,6 +161,21 @@
     transform: translateY(-2px);
   }
 
+  /* Live status. The dot breathes rather than blinks, so it registers as
+     ambient presence instead of an alert demanding attention. */
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: var(--color-teal-300);
+    box-shadow: 0 0 0 0 --alpha(var(--color-teal-300) / 45%);
+    animation: breathe 3.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { box-shadow: 0 0 0 0 --alpha(var(--color-teal-300) / 40%); opacity: 1; }
+    50% { box-shadow: 0 0 0 5px --alpha(var(--color-teal-300) / 0%); opacity: 0.65; }
+  }
+
   /* Link arrow nudges along its own diagonal on hover. */
   .arrow {
     transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
@@ -162,6 +183,48 @@
   .group\/link:hover .arrow {
     transform: translate(2px, -2px);
   }
+}
+
+/* Pointer-tracked wash. The original stylesheet reserved a .glow layer for
+   exactly this and never filled it in. Sized generously and kept very low in
+   opacity so it reads as the page responding to the cursor rather than as an
+   effect. Only mounted for fine pointers. */
+.spotlight {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    600px circle at var(--mx, -100%) var(--my, -100%),
+    --alpha(var(--color-teal-300) / 6%),
+    transparent 45%
+  );
+}
+
+/* Appears once the visitor is far enough down that scrolling back is a chore. */
+.to-top {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+.to-top.is-shown {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
 }
 
 .reveal {
