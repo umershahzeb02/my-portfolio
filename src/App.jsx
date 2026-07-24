@@ -17,8 +17,6 @@ const NAV = [
   ["Writing", "writing"],
 ];
 
-/* One observer for the page. Elements opt in with .reveal and are unobserved
-   once shown, so nothing keeps running after the first pass. */
 function useReveal() {
   useEffect(() => {
     const nodes = document.querySelectorAll(".reveal");
@@ -40,7 +38,6 @@ function useReveal() {
   }, []);
 }
 
-// Highlights the nav row for whichever section is currently in view.
 function useActiveSection() {
   const [active, setActive] = useState("about");
   useEffect(() => {
@@ -53,7 +50,7 @@ function useActiveSection() {
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
         if (visible) setActive(visible.target.id);
       },
-      { rootMargin: "-30% 0px -55% 0px", threshold: [0, 0.25, 0.5] },
+      { rootMargin: "-25% 0px -55% 0px", threshold: [0, 0.25, 0.5] },
     );
     sections.forEach((s) => io.observe(s));
     return () => io.disconnect();
@@ -69,7 +66,7 @@ const Reveal = ({ delay = 0, className = "", as: Tag = "div", children }) => (
 
 const Arrow = () => (
   <svg
-    className="inline-block size-3 shrink-0 translate-y-[-1px] transition-transform duration-200 group-hover/link:translate-x-0.5 group-hover/link:translate-y-[-3px]"
+    className="arrow inline-block size-3 shrink-0 translate-y-[-1px]"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
@@ -85,70 +82,72 @@ const Out = ({ href, children, className = "" }) => (
     href={href}
     target="_blank"
     rel="noreferrer noopener"
-    className={`group/link inline-flex items-center gap-1 font-medium text-slate-200 transition-colors hover:text-teal-300 focus-visible:text-teal-300 ${className}`}
+    className={`group/link inline-flex items-center gap-1.5 text-slate-200 transition-colors duration-300 hover:text-teal-300 focus-visible:text-teal-300 ${className}`}
   >
     {children}
   </a>
 );
 
-const SectionHeading = ({ children }) => (
-  <h2 className="sticky top-0 z-20 -mx-4 mb-5 w-screen bg-slate-900/80 px-4 py-4 font-mono text-xs uppercase tracking-[0.18em] text-slate-200 backdrop-blur-sm md:mx-0 md:w-auto md:px-0 md:py-0 md:bg-transparent md:backdrop-blur-none lg:sr-only">
-    {children}
-  </h2>
+/* Section label. Numbered so the sections read as a sequence — the counter
+   supplies the structure a horizontal rule would otherwise carry. */
+const SectionLabel = ({ index, children }) => (
+  <Reveal className="mb-8 flex items-baseline gap-3">
+    <span className="t-index text-teal-300/70">{index}</span>
+    <span className="t-label text-slate-400">{children}</span>
+  </Reveal>
 );
 
 function Sidebar() {
   const active = useActiveSection();
 
   return (
-    <div className="sidebar">
-      <div className="flex h-full flex-col justify-between py-4 md:py-12 lg:pr-8">
-        <div>
-          <h1 className="text-[2.75rem] font-bold leading-[1.05] tracking-[-0.03em] text-slate-100 sm:text-6xl">
-            {profile.name}
-          </h1>
-          <h2 className="mt-3 text-lg font-medium tracking-tight text-slate-200 sm:text-xl">
-            {profile.role}
-          </h2>
-          <p className="mt-4 max-w-sm leading-relaxed text-slate-400">{profile.intro}</p>
+    <header className="sidebar py-12 lg:py-20">
+      <div>
+        <h1 className="t-display text-slate-100">{profile.name}</h1>
+        <p className="t-role mt-4 text-slate-200">{profile.role}</p>
+        <p className="t-body mt-5 max-w-xs text-slate-400">{profile.intro}</p>
 
-          <nav className="mt-14 hidden lg:block" aria-label="Sections">
-            <ul className="space-y-4">
-              {NAV.map(([label, id]) => (
-                <li key={id}>
-                  <a
-                    href={`#${id}`}
-                    className={`nav-item group flex items-center gap-4 py-1 font-mono text-xs uppercase tracking-[0.18em] transition-colors ${
-                      active === id
-                        ? "active text-teal-300"
-                        : "text-slate-500 hover:text-slate-200"
-                    }`}
-                  >
-                    <span className="nav-line" />
-                    {label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-
-        <div className="mt-12 lg:mt-0 lg:pb-12">
-          <Socials />
-        </div>
+        <nav className="mt-16 hidden lg:block" aria-label="Sections">
+          <ul className="space-y-5">
+            {NAV.map(([label, id]) => (
+              <li key={id}>
+                <a
+                  href={`#${id}`}
+                  className={`nav-item t-label ${
+                    active === id
+                      ? "is-active text-teal-300"
+                      : "text-slate-500 hover:text-slate-200"
+                  }`}
+                >
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
-    </div>
+
+      <div className="mt-14 lg:mt-0 lg:pb-20">
+        <Socials />
+      </div>
+    </header>
   );
 }
 
 function About() {
+  const [lede, ...rest] = profile.about;
   return (
-    <section id="about" className="scroll-mt-16 py-10 md:py-14" aria-label="About">
-      <SectionHeading>About</SectionHeading>
-      <Reveal className="space-y-4 leading-relaxed">
-        {profile.about.map((para, i) => (
-          <p key={i}>{para}</p>
-        ))}
+    <section id="about" className="scroll-mt-24 pb-24" aria-label="About">
+      <SectionLabel index="01">About</SectionLabel>
+      <Reveal>
+        {/* The opening paragraph is set a step larger and lighter in colour, so
+            the eye has an obvious entry point without a heading above it. */}
+        <p className="t-lede text-slate-300">{lede}</p>
+        <div className="t-body mt-5 space-y-5 text-slate-400">
+          {rest.map((para, i) => (
+            <p key={i}>{para}</p>
+          ))}
+        </div>
       </Reveal>
     </section>
   );
@@ -156,68 +155,53 @@ function About() {
 
 function Experience() {
   return (
-    <section id="experience" className="scroll-mt-16 py-10 md:py-14" aria-label="Experience">
-      <SectionHeading>Experience</SectionHeading>
+    <section id="experience" className="scroll-mt-24 pb-24" aria-label="Experience">
+      <SectionLabel index="02">Experience</SectionLabel>
 
-      <Reveal className="group relative rounded-lg p-4 transition-colors hover:bg-slate-800/40 lg:-mx-4">
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-          <h3 className="font-semibold text-slate-200">
-            {experience.role} <span className="text-slate-400">· {experience.orgShort}</span>
-          </h3>
-          <span className="shrink-0 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-slate-500">
-            {experience.period}
-          </span>
-        </div>
-        <p className="mt-1 text-sm text-slate-500">{experience.note}</p>
+      <Reveal className="card -mx-4 p-4">
+        <p className="t-meta text-slate-500">{experience.period}</p>
+        <h3 className="t-heading mt-2 text-slate-100">{experience.role}</h3>
+        <p className="t-body text-slate-300">{experience.orgShort}</p>
+        <p className="t-body mt-1 text-sm text-slate-500">{experience.note}</p>
 
-        <ul className="mt-5 space-y-5">
+        <ul className="mt-7 space-y-6">
           {experience.projects.map((p) => (
-            <li key={p.name} className="border-l border-slate-700/70 pl-4">
-              <h4 className="font-medium text-slate-200">
+            <li key={p.name}>
+              <h4 className="t-heading text-slate-200">
                 {p.href ? (
                   <Out href={p.href}>
                     {p.name} <Arrow />
                   </Out>
                 ) : (
                   <>
-                    {p.name} <span className="font-normal text-slate-500">(internal)</span>
+                    {p.name}{" "}
+                    <span className="t-meta align-middle text-slate-500">internal</span>
                   </>
                 )}
               </h4>
-              <p className="mt-1.5 leading-relaxed text-slate-400">{p.text}</p>
+              <p className="t-body mt-1.5 text-slate-400">{p.text}</p>
             </li>
           ))}
         </ul>
       </Reveal>
 
-      <Reveal className="mt-10" delay={60}>
-        <h3 className="font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-slate-500">
-          Education
-        </h3>
-        <ul className="mt-4 space-y-2">
+      <Reveal className="mt-12" delay={60}>
+        <p className="t-label mb-5 text-slate-500">Education</p>
+        <ul className="space-y-4">
           {education.map((e) => (
-            <li key={e.school} className="flex flex-wrap justify-between gap-x-4 gap-y-0.5">
-              <span>
-                <span className="font-medium text-slate-200">{e.detail}</span>
-                <span className="text-slate-400"> — {e.school}</span>
-              </span>
-              <span className="shrink-0 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-slate-500">
-                {e.period}
-              </span>
+            <li key={e.school}>
+              <p className="t-meta text-slate-500">{e.period}</p>
+              <p className="t-heading mt-1 text-slate-200">{e.detail}</p>
+              <p className="t-body text-slate-400">{e.school}</p>
             </li>
           ))}
         </ul>
       </Reveal>
 
       <Reveal className="mt-10" delay={90}>
-        <a
-          href={links.resume}
-          target="_blank"
-          rel="noreferrer noopener"
-          className="group/link inline-flex items-center gap-1.5 font-medium text-slate-200 transition-colors hover:text-teal-300"
-        >
-          View full résumé <Arrow />
-        </a>
+        <Out href={links.resume} className="t-link">
+          Full résumé <Arrow />
+        </Out>
       </Reveal>
     </section>
   );
@@ -225,39 +209,40 @@ function Experience() {
 
 function Projects() {
   return (
-    <section id="projects" className="scroll-mt-16 py-10 md:py-14" aria-label="Projects">
-      <SectionHeading>Projects</SectionHeading>
+    <section id="projects" className="scroll-mt-24 pb-24" aria-label="Projects">
+      <SectionLabel index="03">Projects</SectionLabel>
 
-      <ul className="space-y-3">
+      <ul className="space-y-4">
         {work.map((p, i) => (
           <Reveal as="li" key={p.title} delay={i * 60}>
-            <div className="group relative rounded-lg p-4 transition-colors hover:bg-slate-800/40 lg:-mx-4">
-              <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-                <h3 className="font-semibold text-slate-200 transition-colors group-hover:text-teal-300">
-                  {p.title}
-                </h3>
-                <span className="shrink-0 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-slate-500">
-                  {p.domain}
+            <div className="card group -mx-4 p-4">
+              {/* Index and domain share a line above the title: the counter
+                  gives rhythm down the list, the domain gives the category. */}
+              <div className="flex items-baseline gap-3">
+                <span className="t-index text-slate-600">
+                  {String(i + 1).padStart(2, "0")}
                 </span>
+                <span className="t-label text-teal-300/80">{p.domain}</span>
               </div>
 
-              <p className="mt-2 leading-relaxed">{p.summary}</p>
-              {p.detail && <p className="mt-2 leading-relaxed text-slate-500">{p.detail}</p>}
+              <h3 className="t-heading mt-2 text-[1.1875rem] text-slate-100 transition-colors duration-300 group-hover:text-teal-300">
+                {p.title}
+              </h3>
 
-              <ul className="mt-3 flex flex-wrap gap-2">
+              <p className="t-body mt-2 text-slate-400">{p.summary}</p>
+              {p.detail && <p className="t-body mt-2 text-slate-500">{p.detail}</p>}
+
+              <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5">
                 {p.stack.map((s) => (
-                  <li
-                    key={s}
-                    className="rounded-full bg-teal-400/10 px-3 py-1 font-mono text-[0.6875rem] leading-5 text-teal-300"
-                  >
+                  <li key={s} className="t-meta text-teal-300/75">
                     {s}
                   </li>
                 ))}
               </ul>
 
-              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-sm">
+              <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
                 {p.links.map((l) => (
-                  <Out key={l.href} href={l.href}>
+                  <Out key={l.href} href={l.href} className="t-link">
                     {l.label} <Arrow />
                   </Out>
                 ))}
@@ -267,9 +252,9 @@ function Projects() {
         ))}
       </ul>
 
-      <Reveal className="mt-6 px-4 lg:px-0" delay={80}>
-        <Out href={links.github}>
-          All projects on GitHub <Arrow />
+      <Reveal className="mt-8 px-4 lg:px-0" delay={80}>
+        <Out href={links.github} className="t-link">
+          All projects <Arrow />
         </Out>
       </Reveal>
     </section>
@@ -278,36 +263,36 @@ function Projects() {
 
 function Writing() {
   return (
-    <section id="writing" className="scroll-mt-16 py-10 md:py-14" aria-label="Writing">
-      <SectionHeading>Writing</SectionHeading>
+    <section id="writing" className="scroll-mt-24 pb-24" aria-label="Writing">
+      <SectionLabel index="04">Writing</SectionLabel>
 
-      <Reveal className="mb-4 leading-relaxed">
+      <Reveal className="t-body mb-6 text-slate-400">
         <p>
           On browser internals, automation, infrastructure and web architecture — at the{" "}
-          <Out href="https://bumbletap.com/blog" className="!font-normal">
+          <Out href="https://bumbletap.com/blog" className="!inline">
             BumbleTap engineering blog
           </Out>{" "}
           and on{" "}
-          <Out href={links.medium} className="!font-normal">
+          <Out href={links.medium} className="!inline">
             Medium
           </Out>
           .
         </p>
       </Reveal>
 
-      <ul className="space-y-2">
+      <ul className="space-y-3">
         {writing.map((a, i) => (
           <Reveal as="li" key={a.href} delay={i * 60}>
             <a
               href={a.href}
               target="_blank"
               rel="noreferrer noopener"
-              className="group/link block rounded-lg p-4 transition-colors hover:bg-slate-800/40 lg:-mx-4"
+              className="card group/link -mx-4 block p-4"
             >
-              <h3 className="font-semibold text-slate-200 transition-colors group-hover/link:text-teal-300">
+              <h3 className="t-heading text-slate-100 transition-colors duration-300 group-hover/link:text-teal-300">
                 {a.title} <Arrow />
               </h3>
-              <p className="mt-1.5 leading-relaxed text-slate-400">{a.blurb}</p>
+              <p className="t-body mt-1.5 text-slate-400">{a.blurb}</p>
             </a>
           </Reveal>
         ))}
@@ -318,17 +303,13 @@ function Writing() {
 
 function Stack() {
   return (
-    <section className="py-10 md:py-14" aria-label="Stack">
-      <SectionHeading>Stack</SectionHeading>
-      <dl className="space-y-3">
+    <section className="pb-24" aria-label="Stack">
+      <SectionLabel index="05">Stack</SectionLabel>
+      <dl className="space-y-5">
         {stack.map((row, i) => (
           <Reveal key={row.label} delay={i * 40}>
-            <div className="grid gap-0.5 sm:grid-cols-[8.5rem_1fr] sm:gap-4">
-              <dt className="font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-slate-500 sm:pt-0.5">
-                {row.label}
-              </dt>
-              <dd className="text-slate-400">{row.items}</dd>
-            </div>
+            <dt className="t-label text-slate-500">{row.label}</dt>
+            <dd className="t-body mt-1 text-slate-400">{row.items}</dd>
           </Reveal>
         ))}
       </dl>
@@ -340,32 +321,26 @@ export default function App() {
   useReveal();
 
   return (
-    <div className="min-h-screen bg-slate-900 leading-relaxed text-slate-400 antialiased selection:bg-teal-300 selection:text-teal-900">
+    <div className="min-h-screen bg-slate-900 text-slate-400 antialiased">
       <a
         href="#about"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-teal-300 focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-teal-900"
+        className="t-label sr-only focus:not-sr-only focus:absolute focus:left-6 focus:top-6 focus:z-50 focus:rounded focus:bg-teal-300 focus:px-3 focus:py-2 focus:text-teal-900"
       >
         Skip to content
       </a>
 
-      <div className="mx-auto flex w-full max-w-screen-xl flex-col px-6 md:flex-row md:px-12 lg:px-16">
-        <div className="w-full p-4 md:w-1/2">
-          <Sidebar />
-        </div>
-        <div className="w-full p-4 md:w-1/2">
-          <main>
-            <About />
-            <Experience />
-            <Projects />
-            <Writing />
-            <Stack />
-          </main>
-          <footer className="pb-16 pt-4 text-sm text-slate-500">
-            <p>
-              Built with React, Tailwind CSS and Vite. Deployed on GitHub Pages.
-            </p>
+      <div className="mx-auto grid w-full max-w-6xl gap-x-16 px-6 sm:px-10 lg:grid-cols-2 lg:px-16">
+        <Sidebar />
+        <main className="pt-4 lg:py-20">
+          <About />
+          <Experience />
+          <Projects />
+          <Writing />
+          <Stack />
+          <footer className="t-meta pb-16 text-slate-600">
+            <p>Built with React, Tailwind CSS and Vite. Deployed on GitHub Pages.</p>
           </footer>
-        </div>
+        </main>
       </div>
     </div>
   );

@@ -1,74 +1,197 @@
 @import "tailwindcss";
 
-/* Type only. The palette stays with Tailwind's slate/teal defaults, which is
-   what the original design used. */
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 @layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    /* Pulls opening quotes and brackets into the margin so the text edge stays
+       optically straight. Safari-only today, and harmless everywhere else. */
+    hanging-punctuation: first last;
+  }
+
   body {
     font-family: var(--font-sans);
-    /* cv11 gives Inter the single-storey a; ss01 the rounded quotes. Small
-       details, but they are what stop Inter looking like default system UI. */
-    font-feature-settings: "kern", "liga", "cv11", "ss01";
+    /* calt drives Inter's contextual alternates, cv11 the single-storey a,
+       ss01 the rounded quotes. Without these Inter renders as default system UI. */
+    font-feature-settings: "kern", "liga", "calt", "cv11", "ss01";
+    font-optical-sizing: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* balance keeps headings from dropping a single trailing word onto its own
+     line; pretty does the same for the last line of a paragraph. */
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--color-teal-300);
+    color: var(--color-teal-900);
+  }
+
   :focus-visible {
-    outline: 2px solid theme(--color-teal-300);
-    outline-offset: 3px;
-    border-radius: 2px;
+    outline: 2px solid var(--color-teal-300);
+    outline-offset: 4px;
+    border-radius: 3px;
   }
 }
 
-/* Sidebar pinning, carried over from the original stylesheet. */
-.sidebar {
-  position: relative;
-  height: auto;
-  overflow-y: auto;
-  z-index: 1000;
-}
+@layer components {
+  /* ===== TYPE SCALE =====
+     Tracking moves inversely to size: large type needs negative tracking to
+     close the gaps that scaling opens up, small type needs positive tracking
+     to stay legible. A single letter-spacing across the scale is the most
+     common way a page reads as untuned. */
 
-@media (min-width: 950px) {
-  .sidebar {
-    position: fixed;
-    width: 550px;
-    height: 100vh;
-    overflow-y: auto;
-    z-index: 1000;
+  .t-display {
+    font-size: clamp(2.85rem, 6vw, 4.25rem);
+    font-weight: 700;
+    line-height: 0.94;
+    letter-spacing: -0.045em;
+    /* Optical alignment. The S carries a left side bearing, so metric
+       alignment leaves it visually indented against the copy beneath it. */
+    margin-left: -0.045em;
   }
-}
 
-.sidebar::-webkit-scrollbar {
-  width: 0;
-}
+  .t-role {
+    font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
+    font-weight: 500;
+    letter-spacing: -0.012em;
+    line-height: 1.35;
+  }
 
-/* Section-label rule that grows when its row is hovered. */
-.nav-line {
-  display: inline-block;
-  width: 2rem;
-  height: 1px;
-  background: currentColor;
-  transition: width 0.2s ease, background-color 0.2s ease;
-}
-.nav-item:hover .nav-line,
-.nav-item.active .nav-line {
-  width: 4rem;
+  .t-heading {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.4;
+  }
+
+  .t-body {
+    line-height: 1.75;
+    letter-spacing: 0.001em;
+  }
+
+  .t-lede {
+    font-size: 1.0625rem;
+    line-height: 1.8;
+    letter-spacing: -0.003em;
+  }
+
+  /* Mono labels. Uppercase at small sizes needs generous tracking or the
+     counters close up and it reads as a smudge. */
+  .t-label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .t-meta {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.11em;
+    /* Dates line up column-wise only with tabular figures — proportional
+       digits make a stack of years look ragged. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Links sit in sentence case. Uppercase mono at this frequency turned every
+     link into a shout and wrapped badly on narrow columns. */
+  .t-link {
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: -0.006em;
+  }
+
+  .t-index {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ===== NAV =====
+     No rule to grow, so the active state is carried by the type itself: the
+     tracking opens, the weight lifts and the item steps right. */
+  .nav-item {
+    display: inline-block;
+    transition:
+      color 0.28s ease,
+      letter-spacing 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .nav-item:hover,
+  .nav-item.is-active {
+    letter-spacing: 0.34em;
+    transform: translateX(3px);
+  }
+  .nav-item.is-active {
+    font-weight: 600;
+  }
+
+  /* ===== CARDS =====
+     Hover is a tint and a small lift rather than a border, so nothing draws a
+     box around the content. */
+  .card {
+    border-radius: 0.75rem;
+    transition:
+      background-color 0.3s ease,
+      transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .card:hover {
+    background-color: --alpha(var(--color-slate-800) / 45%);
+    transform: translateY(-2px);
+  }
+
+  /* Link arrow nudges along its own diagonal on hover. */
+  .arrow {
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .group\/link:hover .arrow {
+    transform: translate(2px, -2px);
+  }
 }
 
 .reveal {
   opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(12px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   transition-delay: var(--reveal-delay, 0ms);
 }
 .reveal.is-visible {
   opacity: 1;
   transform: none;
+}
+
+.sidebar {
+  position: relative;
+  height: auto;
+  z-index: 10;
+}
+
+@media (min-width: 1024px) {
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
