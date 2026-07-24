@@ -193,7 +193,7 @@ function Sidebar() {
   const time = useLocalTime();
 
   return (
-    <header className="sidebar py-12 lg:py-20">
+    <header className="sidebar py-12 lg:py-16">
       <div>
         <h1 className="t-display text-slate-100">{profile.name}</h1>
         <p className="t-role mt-4 text-teal-300">{profile.tagline}</p>
@@ -206,8 +206,8 @@ function Sidebar() {
           </p>
         </div>
 
-        <nav className="mt-16 hidden lg:block" aria-label="Sections">
-          <ul className="space-y-5">
+        <nav className="mt-12 hidden lg:block" aria-label="Sections">
+          <ul className="space-y-4">
             {NAV.map(([label, id]) => (
               <li key={id}>
                 <a
@@ -227,7 +227,7 @@ function Sidebar() {
         </nav>
       </div>
 
-      <div className="mt-14 lg:mt-0 lg:pb-20">
+      <div className="mt-14 lg:mt-0">
         <CopyEmail />
         <div className="mt-6">
           <Socials />
