@@ -4,7 +4,7 @@ export const profile = {
   name: "Shahzeb Umer",
   // Deliberately not "Full Stack Developer" here. That is the job title and it
   // belongs in Experience; as an identity line it binds the whole page to web.
-  tagline: "The stack follows the problem.",
+  tagline: "Simplicity is prerequisite for reliability.",
   email: "umershahzeb@gmail.com",
   intro:
     "Browser internals, multimodal AI, and platforms at scale. Whatever the next problem turns out to need.",
