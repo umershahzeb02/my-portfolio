@@ -70,31 +70,35 @@
      to stay legible. A single letter-spacing across the scale is the most
      common way a page reads as untuned. */
 
-  /* The headline move: large, heavy, and tracked in hard. Negative tracking is
-     what separates a marketing headline from a big paragraph — at this size the
-     default spacing was drawn for reading, not for a title, and leaving it
-     makes the words drift apart. */
+  /* Sized to sit on ONE line in the sidebar column. At 5rem the name was right
+     at that column's wrap threshold, so it broke to two lines and turned into a
+     heavy block. A name that fits its measure reads composed; one that wraps
+     reads like it outgrew the space.
+
+     600 rather than 700: semibold is what these pages actually use at display
+     sizes. 700 at this scale stops looking confident and starts looking loud,
+     and the authority is supposed to come from the tracking and the space
+     around it, not from the weight. */
   .t-display {
     font-family: var(--font-display);
-    font-size: clamp(3.15rem, 6.8vw, 5rem);
-    font-weight: 700;
-    line-height: 0.92;
-    letter-spacing: -0.042em;
+    font-size: clamp(2.4rem, 4.2vw, 3.4rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.033em;
     /* Optical alignment: the S carries a left side bearing, so metric alignment
        leaves it looking indented against the copy beneath it. */
-    margin-left: -0.045em;
+    margin-left: -0.035em;
   }
 
-  /* The supporting line under a headline is set in the same family at a plain
-     weight — the contrast comes from size and colour, not from a second face.
-     Still tracked negative, just less than the headline, since tracking follows
-     size. */
+  /* Clearly subordinate to the name — roughly a third its size, which is what
+     stops the two competing. The contrast is size and colour, not a second
+     face. Tracking follows size, so it eases off from the headline's. */
   .t-role {
     font-family: var(--font-display);
-    font-size: clamp(1.2rem, 2.05vw, 1.55rem);
+    font-size: clamp(1rem, 1.35vw, 1.125rem);
     font-weight: 400;
-    letter-spacing: -0.021em;
-    line-height: 1.35;
+    letter-spacing: -0.012em;
+    line-height: 1.45;
   }
 
   /* Heading against body sat at 17px over 16px, barely a step, so the two
