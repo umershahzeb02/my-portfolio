@@ -20,9 +20,15 @@
 
   body {
     font-family: var(--font-sans);
-    /* calt drives Inter's contextual alternates, cv11 the single-storey a,
-       ss01 the rounded quotes. Without these Inter renders as default system UI. */
-    font-feature-settings: "kern", "liga", "calt", "cv11", "ss01";
+    /* Kerning, ligatures and contextual alternates have real CSS properties, so
+       they are set as properties: those keep working when a non-variable
+       fallback renders, whereas a raw font-feature-settings list is silently
+       replaced wholesale by any later declaration. Only cv11 (single-storey a)
+       and ss01 (rounded quotes) have no property of their own, so those stay as
+       raw tags — which is exactly what the raw syntax is for. */
+    font-kerning: normal;
+    font-variant-ligatures: common-ligatures contextual;
+    font-feature-settings: "cv11", "ss01";
     font-optical-sizing: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -99,15 +105,33 @@
     line-height: 1.4;
   }
 
+  /* ===== MEASURE =====
+     The content column runs the full half-grid, which put body copy around 78
+     characters a line — past the point where the eye reliably finds the start
+     of the next one. Expressed in em rather than ch so one value holds across
+     the scale: character advance and em both track font-size, so 34em stays
+     ~68 characters whether it is applied to 14px body or 16px lede. (ch is the
+     width of a digit, which is wider than average lowercase, so it overstates
+     the real count.) */
+  .t-body,
+  .t-lede {
+    max-width: 34em;
+    /* A long unbroken token — a URL, a package name — should wrap rather than
+       push the column wide. */
+    overflow-wrap: break-word;
+  }
+
   .t-body {
     font-size: 0.875rem;
-    line-height: 1.72;
+    /* Small text carries more leading on purpose: the line is physically
+       shorter, so the eye needs a clearer vertical step to track back. */
+    line-height: 1.7;
     letter-spacing: 0.003em;
   }
 
   .t-lede {
     font-size: 1rem;
-    line-height: 1.75;
+    line-height: 1.7;
     letter-spacing: -0.002em;
   }
 

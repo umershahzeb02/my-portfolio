@@ -181,9 +181,15 @@ const Out = ({ href, children, className = "" }) => (
 
 /* Section label. Numbered so the sections read as a sequence — the counter
    supplies the structure a horizontal rule would otherwise carry. */
+/* A real h2. These read as the section titles, but were spans, so the outline
+   ran h1 straight to the h3 project titles with nothing in between. The visual
+   treatment is unchanged — the size still comes from .t-label, per the rule that
+   heading level is a semantic choice and size is a separate one. The counter is
+   decorative and hidden from assistive tech, which would otherwise announce
+   "01 About". */
 const SectionLabel = ({ index, children }) => (
-  <Reveal className="mb-8 flex items-baseline gap-3">
-    <span className="t-index text-teal-300/70">{index}</span>
+  <Reveal as="h2" className="mb-8 flex items-baseline gap-3">
+    <span className="t-index text-teal-300/70" aria-hidden="true">{index}</span>
     <span className="t-label text-slate-400">{children}</span>
   </Reveal>
 );
