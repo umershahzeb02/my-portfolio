@@ -202,15 +202,7 @@ function Sidebar() {
     <header className="sidebar py-12 lg:py-16">
       <div>
         <h1 className="t-display text-slate-100">{profile.name}</h1>
-        <p className="t-role mt-4 text-teal-300">{profile.tagline}</p>
-        <p className="t-body mt-5 max-w-xs text-slate-400">{profile.intro}</p>
-
-        <div className="mt-6 flex items-center gap-2.5">
-          <span className="status-dot" aria-hidden="true" />
-          <p className="t-meta text-slate-500">
-            Islamabad{time ? ` · ${time} local` : ""}
-          </p>
-        </div>
+        <p className="t-role mt-5 text-teal-300">{profile.tagline}</p>
 
         <nav className="mt-12 hidden lg:block" aria-label="Sections">
           <ul className="space-y-4">
@@ -231,6 +223,16 @@ function Sidebar() {
             ))}
           </ul>
         </nav>
+
+        {/* Below the nav: the name and tagline are the identity, the nav is the
+            way in, and where I am is a footnote to both rather than something
+            standing between them. */}
+        <div className="mt-10 flex items-center gap-2.5">
+          <span className="status-dot" aria-hidden="true" />
+          <p className="t-meta text-slate-500">
+            Islamabad{time ? ` · ${time} local` : ""}
+          </p>
+        </div>
       </div>
 
       <div className="mt-14 lg:mt-0">

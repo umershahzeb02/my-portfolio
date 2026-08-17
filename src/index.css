@@ -3,11 +3,20 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  /* Space Grotesk shares the squared terminals and constructed feel of the
-     mono already carrying the labels, so headings read as part of the same
-     family of shapes. Against Inter's neutral body it gives the right column a
-     voice without introducing a serif, which would fight the rest. */
-  --font-display: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Serif, sans and mono — the editorial-technical trio, and three families is
+     the ceiling before a page starts reading as undecided.
+
+     Space Grotesk was a near neighbour of the mono: squared, constructed, same
+     register. Two faces that similar read as an accident rather than a choice.
+     A high-contrast serif is the opposite bet — it shares nothing with Inter or
+     JetBrains Mono, so the contrast is unmistakably deliberate, and it puts all
+     the character at the top of the page where the eye lands first.
+
+     Instrument Serif ships one weight, which suits display sizes where 400 is
+     already the correct weight, and an italic that gives the tagline a voice no
+     sans can. Headings drop back to Inter 600: with the serif carrying the
+     personality, the working text below it should stay quiet. */
+  --font-display: "Instrument Serif", ui-serif, Georgia, "Times New Roman", serif;
 }
 
 @layer base {
@@ -63,20 +72,32 @@
      common way a page reads as untuned. */
 
   .t-display {
-    font-size: clamp(2.85rem, 6vw, 4.25rem);
-    font-weight: 700;
-    line-height: 0.94;
-    letter-spacing: -0.045em;
-    /* Optical alignment. The S carries a left side bearing, so metric
-       alignment leaves it visually indented against the copy beneath it. */
-    margin-left: -0.045em;
+    font-family: var(--font-display);
+    /* Runs slightly larger than the old sans setting: a serif at 400 carries
+       less visual mass than Inter at 700, so matching the previous size would
+       have read as a step down rather than across. */
+    font-size: clamp(3.1rem, 6.6vw, 4.75rem);
+    font-weight: 400;
+    line-height: 0.95;
+    /* Serifs already close their own gaps, so this wants far less negative
+       tracking than the bold sans did at the same size. */
+    letter-spacing: -0.018em;
+    /* Optical alignment. The S carries a left side bearing, so metric alignment
+       leaves it visually indented against the copy beneath it. Smaller than
+       before, since the serif's bearing is tighter than Inter Bold's. */
+    margin-left: -0.02em;
   }
 
+  /* The tagline is now the only prose at the top of the sidebar, so it can take
+     the space the removed intro line was using. Italic serif gives it the
+     cadence of a quotation, which is what it is. */
   .t-role {
-    font-size: clamp(1.0625rem, 1.6vw, 1.25rem);
-    font-weight: 500;
-    letter-spacing: -0.012em;
-    line-height: 1.35;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.3rem, 2.3vw, 1.7rem);
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.3;
   }
 
   /* Heading against body sat at 17px over 16px, barely a step, so the two
@@ -84,13 +105,16 @@
      are roughly a major-third apart, which is the usual range for a title and
      its supporting copy. Grey body also gains line-height as it shrinks,
      because shorter lines need proportionally more leading to stay readable. */
+  /* Sans, not the display serif: Instrument Serif ships a single 400, so a
+     heading set in it would either read weak at 18px or get a synthesised bold,
+     which is a smeared imitation of a weight the family does not have. Inter
+     has a real 600. Tracking returns to Inter's own value: it needs more
+     negative than the wider grotesque did at this size. */
   .t-heading {
-    font-family: var(--font-display);
+    font-family: var(--font-sans);
     font-size: 1.125rem;
     font-weight: 600;
-    /* Space Grotesk is drawn wider and already fairly tight, so it needs far
-       less negative tracking than Inter did at the same size. */
-    letter-spacing: -0.006em;
+    letter-spacing: -0.017em;
     line-height: 1.35;
   }
 
@@ -98,10 +122,10 @@
      alone was not enough: the platforms sat at the same 18px as the role above
      them, so they read as its siblings rather than its children. */
   .t-subheading {
-    font-family: var(--font-display);
+    font-family: var(--font-sans);
     font-size: 1rem;
     font-weight: 600;
-    letter-spacing: -0.004em;
+    letter-spacing: -0.013em;
     line-height: 1.4;
   }
 

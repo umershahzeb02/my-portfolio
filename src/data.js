@@ -6,8 +6,6 @@ export const profile = {
   // belongs in Experience; as an identity line it binds the whole page to web.
   tagline: "Simplicity is prerequisite for reliability.",
   email: "umershahzeb@gmail.com",
-  intro:
-    "Browser internals, multimodal AI, and platforms at scale. Whatever the next problem turns out to need.",
   about: [
     "I’m a software engineer in Islamabad, currently at the Directorate of ICT at Allama Iqbal Open University, where I ship public and internal platforms for an institution serving 400,000+ students.",
     "I pick the stack to fit the problem rather than the other way round. So far that has meant browser internals, multimodal AI systems, production platforms at scale, infrastructure, and a fair amount of algorithmic work. The common thread is depth: going as far down as a problem actually requires instead of stopping at the framework.",
