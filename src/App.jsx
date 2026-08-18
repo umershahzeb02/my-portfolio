@@ -5,7 +5,6 @@ import {
   work,
   experience,
   writing,
-  stack,
   education,
 } from "./data";
 import Socials from "./Socials";
@@ -81,24 +80,6 @@ function useSpotlight() {
       cancelAnimationFrame(raf);
     };
   }, []);
-}
-
-// Local time where he actually is, so "Islamabad" carries a bit of presence.
-function useLocalTime() {
-  const [time, setTime] = useState("");
-  useEffect(() => {
-    const read = () =>
-      new Intl.DateTimeFormat("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-        timeZone: "Asia/Karachi",
-      }).format(new Date());
-    setTime(read());
-    const id = setInterval(() => setTime(read()), 30000);
-    return () => clearInterval(id);
-  }, []);
-  return time;
 }
 
 /* Copying beats a mailto: for anyone not using a desktop mail client, which is
@@ -196,7 +177,6 @@ const SectionLabel = ({ index, children }) => (
 
 function Sidebar() {
   const active = useActiveSection();
-  const time = useLocalTime();
 
   return (
     <header className="sidebar py-12 lg:py-16">
@@ -232,12 +212,6 @@ function Sidebar() {
           </ul>
         </nav>
 
-        <div className="mt-9 flex items-center gap-2.5">
-          <span className="status-dot" aria-hidden="true" />
-          <p className="t-meta text-slate-500">
-            Islamabad{time ? ` · ${time} local` : ""}
-          </p>
-        </div>
 
         <div className="mt-9">
           <CopyEmail />
@@ -426,22 +400,6 @@ function Writing() {
   );
 }
 
-function Stack() {
-  return (
-    <section className="pb-24" aria-label="Stack">
-      <SectionLabel index="05">Stack</SectionLabel>
-      <dl className="space-y-5">
-        {stack.map((row, i) => (
-          <Reveal key={row.label} delay={i * 40}>
-            <dt className="t-label text-slate-500">{row.label}</dt>
-            <dd className="t-body mt-1 text-slate-400">{row.items}</dd>
-          </Reveal>
-        ))}
-      </dl>
-    </section>
-  );
-}
-
 export default function App() {
   useReveal();
   useSpotlight();
@@ -463,7 +421,6 @@ export default function App() {
           <Experience />
           <Projects />
           <Writing />
-          <Stack />
           <footer className="t-meta pb-16 text-slate-600">
             <p>Built with React, Tailwind CSS and Vite. Deployed on GitHub Pages.</p>
           </footer>

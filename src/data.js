@@ -114,14 +114,6 @@ export const writing = [
   },
 ];
 
-export const stack = [
-  { label: "Languages", items: "TypeScript · JavaScript · Python · C++ · C# · SQL" },
-  { label: "Backend", items: "Node.js · Express · FastAPI · REST APIs · WebSockets" },
-  { label: "Frontend", items: "React · Next.js · React Native · Tailwind CSS" },
-  { label: "Data", items: "PostgreSQL · MySQL · MongoDB · MS SQL Server · ChromaDB" },
-  { label: "AI", items: "OpenAI-compatible & Gemini APIs · RAG · embeddings · reranking" },
-  { label: "Infrastructure", items: "Docker · Kubernetes · AWS · Cloudflare · Nginx · CI/CD" },
-];
 
 export const education = [
   {

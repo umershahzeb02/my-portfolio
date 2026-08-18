@@ -226,21 +226,6 @@
     transform: translateY(-2px);
   }
 
-  /* Live status. The dot breathes rather than blinks, so it registers as
-     ambient presence instead of an alert demanding attention. */
-  .status-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 9999px;
-    background: var(--color-teal-300);
-    box-shadow: 0 0 0 0 --alpha(var(--color-teal-300) / 45%);
-    animation: breathe 3.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-  @keyframes breathe {
-    0%, 100% { box-shadow: 0 0 0 0 --alpha(var(--color-teal-300) / 40%); opacity: 1; }
-    50% { box-shadow: 0 0 0 5px --alpha(var(--color-teal-300) / 0%); opacity: 0.65; }
-  }
-
   /* Link arrow nudges along its own diagonal on hover. */
   .arrow {
     transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
