@@ -200,11 +200,19 @@ function Sidebar() {
 
   return (
     <header className="sidebar py-12 lg:py-16">
+      {/* Only the identity sits up top. */}
       <div>
         <h1 className="t-display text-slate-100">{profile.name}</h1>
         <p className="t-role mt-5 text-teal-300">{profile.tagline}</p>
+      </div>
 
-        <nav className="mt-12 hidden lg:block" aria-label="Sections">
+      {/* Nav, location and contact form one lower group. The sidebar is a
+          space-between column, so this pins to the bottom while the name stays
+          at the top — which lines the nav up with the body content on the right
+          instead of hanging off the name, and closes the dead gap that used to
+          sit in the middle of the column. */}
+      <div className="mt-14 lg:mt-0">
+        <nav className="hidden lg:block" aria-label="Sections">
           <ul className="space-y-4">
             {NAV.map(([label, id]) => (
               <li key={id}>
@@ -224,27 +232,23 @@ function Sidebar() {
           </ul>
         </nav>
 
-        {/* Below the nav: the name and tagline are the identity, the nav is the
-            way in, and where I am is a footnote to both rather than something
-            standing between them. */}
-        <div className="mt-10 flex items-center gap-2.5">
+        <div className="mt-9 flex items-center gap-2.5">
           <span className="status-dot" aria-hidden="true" />
           <p className="t-meta text-slate-500">
             Islamabad{time ? ` · ${time} local` : ""}
           </p>
         </div>
-      </div>
 
-      <div className="mt-14 lg:mt-0">
-        <CopyEmail />
-        <div className="mt-6">
-          <Socials />
+        <div className="mt-9">
+          <CopyEmail />
+          <div className="mt-6">
+            <Socials />
+          </div>
         </div>
       </div>
     </header>
   );
 }
-
 function About() {
   const [lede, ...rest] = profile.about;
   return (
