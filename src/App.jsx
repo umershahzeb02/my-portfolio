@@ -186,13 +186,15 @@ function Sidebar() {
         <p className="t-role mt-5 text-teal-300">{profile.tagline}</p>
       </div>
 
-      {/* Nav, location and contact form one lower group. The sidebar is a
-          space-between column, so this pins to the bottom while the name stays
-          at the top — which lines the nav up with the body content on the right
-          instead of hanging off the name, and closes the dead gap that used to
-          sit in the middle of the column. */}
-      <div className="mt-14 lg:mt-0">
-        <nav className="hidden lg:block" aria-label="Sections">
+      {/* The nav is its own group between the identity and the contact block,
+          and it takes all the leftover height of the column so it can centre
+          itself inside it. That puts the items in the middle of the sidebar
+          rather than hanging off the name or riding on top of the contact
+          details. Handing the free space to this group is also what pins the
+          other two: space-between is left with nothing to distribute, so the
+          name stays at the top and the contact block at the foot. */}
+      <div className="nav-mid hidden lg:flex">
+        <nav aria-label="Sections">
           <ul className="space-y-4">
             {NAV.map(([label, id]) => (
               <li key={id}>
@@ -211,13 +213,18 @@ function Sidebar() {
             ))}
           </ul>
         </nav>
+      </div>
 
-
-        <div className="mt-9">
-          <CopyEmail />
-          <div className="mt-6">
-            <Socials />
-          </div>
+      {/* Contact stays at the foot. The top margin only does anything in the
+          stacked mobile layout, where the nav group is display:none and this
+          would otherwise sit directly under the tagline. 23 rather than 14
+          because the old markup nested this inside the nav group and picked up
+          a second margin on the way down; this keeps the mobile gap at the 92px
+          it already rendered at instead of quietly tightening it. */}
+      <div className="mt-23 lg:mt-0">
+        <CopyEmail />
+        <div className="mt-6">
+          <Socials />
         </div>
       </div>
     </header>

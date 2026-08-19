@@ -7,7 +7,7 @@ export const profile = {
   tagline: "Simplicity is prerequisite for reliability.",
   email: "umershahzeb@gmail.com",
   about: [
-    "I’m a software engineer in Islamabad, currently at the Directorate of ICT at Allama Iqbal Open University, where I ship public and internal platforms for an institution serving 400,000+ students.",
+    "I’m a software engineer currently at the Directorate of ICT at Allama Iqbal Open University, where I ship public and internal platforms for an institution serving 400,000+ students.",
     "I pick the stack to fit the problem rather than the other way round. So far that has meant browser internals, multimodal AI systems, production platforms at scale, infrastructure, and a fair amount of algorithmic work. The common thread is depth: going as far down as a problem actually requires instead of stopping at the framework.",
     "I write about browser internals, automation and web architecture, and I’m always looking for the next unfamiliar problem.",
   ],

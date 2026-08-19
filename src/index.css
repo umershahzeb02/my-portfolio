@@ -322,6 +322,23 @@
   .sidebar > * {
     flex-shrink: 0;
   }
+
+  /* The nav group is the exception: it takes the leftover height of the column
+     and centres the list inside it, which is what lands the items in the middle
+     of the sidebar instead of hanging off the name or sitting on the contact
+     block. Because this group absorbs the free space, space-between above has
+     none left to hand out, so the name and the contact details hold their
+     positions at the two ends on their own.
+
+     It is also the one group allowed to give way when the column runs short —
+     hence the shrink factor and min-height, which a flex item needs before it
+     will size below its content. The name and contact block keep their
+     flex-shrink: 0 and are never compressed. */
+  .sidebar .nav-mid {
+    flex: 1 1 auto;
+    align-items: center;
+    min-height: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
