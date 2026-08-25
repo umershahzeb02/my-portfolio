@@ -16,7 +16,9 @@
       content="Software engineer. Browser internals, multimodal AI, and production platforms at scale. Simplicity is prerequisite for reliability."
     />
     <meta name="author" content="Shahzeb Umer" />
-    <meta name="theme-color" content="#0f172a" />
+    <!-- Paper by default, the old slate where the OS asks for dark. -->
+    <meta name="theme-color" content="#fbfaf6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
         <meta property="og:type" content="website" />
     <meta property="og:title" content="Shahzeb Umer — Software Engineer" />
     <meta
@@ -26,12 +28,27 @@
     <meta property="og:url" content="https://umershahzeb02.github.io/my-portfolio/" />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=JetBrains+Mono:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Computer Modern is bundled from node_modules and declared in
+         index.css, so there is nothing to fetch from a font CDN. The Inter
+         and JetBrains Mono links that used to sit here were two DNS lookups
+         and a render-blocking stylesheet for faces the page no longer uses. -->
+
+    <!-- Runs before first paint, so the page never flashes the wrong theme.
+         A stored choice wins; failing that, follow the operating system.
+         Anything unexpected falls through to the light paper. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var dark = stored
+            ? stored === "dark"
+            : window.matchMedia("(prefers-color-scheme: dark)").matches;
+          document.documentElement.dataset.theme = dark ? "dark" : "light";
+        } catch (e) {
+          document.documentElement.dataset.theme = "light";
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

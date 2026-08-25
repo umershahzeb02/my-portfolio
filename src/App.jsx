@@ -106,6 +106,44 @@ function CopyEmail() {
   );
 }
 
+/* The theme lives on <html data-theme>, not in React state alone: index.html
+   sets it before first paint so the page never flashes the wrong one. This
+   component only reads that value and keeps the two in step. */
+function ThemeToggle() {
+  const [dark, setDark] = useState(
+    () => document.documentElement.dataset.theme === "dark",
+  );
+  const toggle = () => {
+    const next = dark ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem("theme", next);
+    } catch {
+      /* private mode — the choice just will not survive a reload */
+    }
+    setDark(!dark);
+  };
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
+      className="theme-toggle bg-slate-800/70 text-slate-300 backdrop-blur hover:bg-teal-300 hover:text-teal-900"
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+        {dark ? (
+          <>
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" strokeLinecap="round" />
+          </>
+        ) : (
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" strokeLinecap="round" strokeLinejoin="round" />
+        )}
+      </svg>
+    </button>
+  );
+}
+
 function ToTop() {
   const [shown, setShown] = useState(false);
   useEffect(() => {
@@ -328,7 +366,7 @@ function Projects() {
                 <span className="t-index text-slate-600">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="t-label text-teal-300/80">{p.domain}</span>
+                <span className="t-label domain-chip text-teal-300/80">{p.domain}</span>
               </div>
 
               <h3 className="t-heading mt-2 text-[1.1875rem] text-slate-100 transition-colors duration-300 group-hover:text-teal-300">
@@ -338,7 +376,7 @@ function Projects() {
               <p className="t-body mt-2 text-slate-400">{p.summary}</p>
               {p.detail && <p className="t-body mt-2 text-slate-500">{p.detail}</p>}
 
-              <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5">
+              <ul className="stack mt-4 flex flex-wrap gap-x-4 gap-y-1.5">
                 {p.stack.map((s) => (
                   <li key={s} className="t-meta text-teal-300/75">
                     {s}
@@ -434,6 +472,7 @@ export default function App() {
         </main>
       </div>
 
+      <ThemeToggle />
       <ToTop />
     </div>
   );

@@ -1,55 +1,113 @@
 @import "tailwindcss";
 
-@theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  /* One sans across display and body, with the mono kept only for technical
-     labels. That is how the pages this is aiming at are actually set: Apple runs
-     essentially one family everywhere, and the startup marketing sites that read
-     as expensive do the same. Mixing display families is what makes a page look
-     like a template.
+/* ===================================================================
+   COMPUTER MODERN
 
-     Inter carries it because of its optical-size axis, which is the same
-     mechanism behind SF Pro's Display and Text cuts: as the size grows the face
-     tightens its spacing and closes its apertures, so a headline is a genuinely
-     different drawing rather than body text scaled up. font-optical-sizing:auto
-     in the base layer drives it from font-size, so the display end of the range
-     engages on its own. */
+   Declared by hand rather than importing computer-modern's own
+   stylesheets. Those ship `font-style: roman`, which is not a valid CSS
+   value, and pair every woff2 with a ttf roughly three times the size —
+   both of which Vite would bundle. These four faces are the ones the
+   page actually uses, woff2 only, ~790KB total.
+
+   The family has no 400 cut: its regular weight is 500. Declaring that
+   file AS 400 is what stops the browser synthesising a fake bold for
+   body copy, and leaves the real 700 for headings.
+   =================================================================== */
+@font-face {
+  font-family: "CMU Serif";
+  src: url("../node_modules/computer-modern/fonts/cmu-serif-500-roman.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "CMU Serif";
+  src: url("../node_modules/computer-modern/fonts/cmu-serif-500-italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "CMU Serif";
+  src: url("../node_modules/computer-modern/fonts/cmu-serif-700-roman.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "CMU Typewriter Text";
+  src: url("../node_modules/computer-modern/fonts/cmu-typewriter-text-500-roman.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  /* Computer Modern in both themes. Swapping typeface with the colour
+     scheme would reflow the page on every toggle, and a LaTeX paper that
+     stops being one in the dark is not a LaTeX paper. */
+  --font-sans: "CMU Serif", "Latin Modern Roman", Georgia, "Times New Roman", serif;
+  --font-mono: "CMU Typewriter Text", ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-display: var(--font-sans);
+}
+
+/* ===================================================================
+   THEME
+
+   Tailwind 4 compiles every colour utility to var(--color-*) — verified
+   in the build output: .text-slate-100{color:var(--color-slate-100)}.
+   So the whole page re-themes by redefining those variables, and not one
+   class in App.jsx has to change.
+
+   The overrides sit under :not([data-theme="dark"]) on purpose. Night
+   mode is therefore the ABSENCE of an override: it renders on Tailwind's
+   own untouched slate/teal ramp, which is the design as it already was.
+   Nothing is transcribed by hand, so nothing can drift out of sync.
+   =================================================================== */
+:root {
+  --mark-stars: #9a3412;
+  --mark-puzzles: #a78100;
+  --mark-plowhorses: #5f911f;
+  --mark-dogs: #6d6d72;
+}
+
+:root:not([data-theme="dark"]) {
+  /* Not pure white. Printed stock is warm, and #fff under a serif this
+     high-contrast glares. */
+  --paper: #fbfaf6;
+
+  --color-slate-900: var(--paper);   /* page */
+  --color-slate-800: #e8e3d6;        /* card wash, used at 45% alpha */
+  --color-slate-600: #9b9b93;        /* footer, list counters */
+  --color-slate-500: var(--mark-dogs); /* dates, inactive nav */
+  --color-slate-400: #3f3f39;        /* body */
+  --color-slate-300: #2b2b25;        /* lede */
+  --color-slate-200: #1c1c17;        /* links, subheads */
+  --color-slate-100: #12120d;        /* headings, the name */
+
+  --color-teal-300: var(--mark-stars); /* every accent */
+  --color-teal-900: var(--paper);      /* type sitting ON an accent fill */
 }
 
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
-    /* Pulls opening quotes and brackets into the margin so the text edge stays
-       optically straight. Safari-only today, and harmless everywhere else. */
     hanging-punctuation: first last;
   }
 
   body {
     font-family: var(--font-sans);
-    /* Kerning, ligatures and contextual alternates have real CSS properties, so
-       they are set as properties: those keep working when a non-variable
-       fallback renders, whereas a raw font-feature-settings list is silently
-       replaced wholesale by any later declaration. Only cv11 (single-storey a)
-       and ss01 (rounded quotes) have no property of their own, so those stay as
-       raw tags — which is exactly what the raw syntax is for. */
     font-kerning: normal;
     font-variant-ligatures: common-ligatures contextual;
-    font-feature-settings: "cv11", "ss01";
-    font-optical-sizing: auto;
+    /* Grayscale smoothing is dropped in the light theme further down:
+       dark-on-light wants the extra weight that subpixel rendering gives,
+       and CM is a thin face to begin with. */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* balance keeps headings from dropping a single trailing word onto its own
-     line; pretty does the same for the last line of a paragraph. */
-  h1, h2, h3, h4 {
-    text-wrap: balance;
-  }
-  p {
-    text-wrap: pretty;
-  }
+  h1, h2, h3, h4 { text-wrap: balance; }
+  p { text-wrap: pretty; }
 
   ::selection {
     background: var(--color-teal-300);
@@ -61,141 +119,113 @@
     outline-offset: 4px;
     border-radius: 3px;
   }
+
+  /* CM was drawn for print, where the ink spreads. On a backlit screen at
+     dark-on-light it reads anaemic under grayscale smoothing, so the light
+     theme hands rendering back to the OS. */
+  :root:not([data-theme="dark"]) body {
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+  }
 }
 
 @layer components {
   /* ===== TYPE SCALE =====
-     Tracking moves inversely to size: large type needs negative tracking to
-     close the gaps that scaling opens up, small type needs positive tracking
-     to stay legible. A single letter-spacing across the scale is the most
-     common way a page reads as untuned. */
+     Retuned for Computer Modern. Inter wanted heavy negative tracking at
+     display sizes because its default fit is loose; CM is fitted for
+     letterpress and is already tight, so the same values would jam the
+     letters together. */
 
-  /* Sized to sit on ONE line in the sidebar column. At 5rem the name was right
-     at that column's wrap threshold, so it broke to two lines and turned into a
-     heavy block. A name that fits its measure reads composed; one that wraps
-     reads like it outgrew the space.
-
-     600 rather than 700: semibold is what these pages actually use at display
-     sizes. 700 at this scale stops looking confident and starts looking loud,
-     and the authority is supposed to come from the tracking and the space
-     around it, not from the weight. */
   .t-display {
     font-family: var(--font-display);
     font-size: clamp(2.4rem, 4.2vw, 3.4rem);
-    font-weight: 600;
-    line-height: 1;
-    letter-spacing: -0.033em;
-    /* Optical alignment: the S carries a left side bearing, so metric alignment
-       leaves it looking indented against the copy beneath it. */
-    margin-left: -0.035em;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.008em;
+    margin-left: -0.02em;
   }
 
-  /* Clearly subordinate to the name — roughly a third its size, which is what
-     stops the two competing. The contrast is size and colour, not a second
-     face. Tracking follows size, so it eases off from the headline's. */
   .t-role {
     font-family: var(--font-display);
-    font-size: clamp(1rem, 1.35vw, 1.125rem);
+    font-size: clamp(1.0625rem, 1.4vw, 1.1875rem);
     font-weight: 400;
-    letter-spacing: -0.012em;
-    line-height: 1.45;
+    font-style: italic;   /* a pulled quote is italic in a paper */
+    letter-spacing: 0;
+    line-height: 1.5;
   }
 
-  /* Heading against body sat at 17px over 16px, barely a step, so the two
-     read as one block of text. A modular scale wants a real interval: these
-     are roughly a major-third apart, which is the usual range for a title and
-     its supporting copy. Grey body also gains line-height as it shrinks,
-     because shorter lines need proportionally more leading to stay readable. */
-  /* Section and project titles. Same family as everything else, distinguished
-     by weight and size rather than by a second face. */
   .t-heading {
     font-family: var(--font-sans);
-    font-size: 1.125rem;
-    font-weight: 600;
-    letter-spacing: -0.017em;
-    line-height: 1.35;
+    font-size: 1.1875rem;
+    font-weight: 700;
+    letter-spacing: -0.004em;
+    line-height: 1.3;
   }
 
-  /* One step under .t-heading, for entries nested beneath a heading. Indenting
-     alone was not enough: the platforms sat at the same 18px as the role above
-     them, so they read as its siblings rather than its children. */
   .t-subheading {
     font-family: var(--font-sans);
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: -0.013em;
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: 0;
     line-height: 1.4;
   }
 
-  /* ===== MEASURE =====
-     The content column runs the full half-grid, which put body copy around 78
-     characters a line — past the point where the eye reliably finds the start
-     of the next one. Expressed in em rather than ch so one value holds across
-     the scale: character advance and em both track font-size, so 34em stays
-     ~68 characters whether it is applied to 14px body or 16px lede. (ch is the
-     width of a digit, which is wider than average lowercase, so it overstates
-     the real count.) */
+  /* ===== MEASURE ===== */
   .t-body,
   .t-lede {
     max-width: 34em;
-    /* A long unbroken token — a URL, a package name — should wrap rather than
-       push the column wide. */
     overflow-wrap: break-word;
   }
 
   .t-body {
-    font-size: 0.875rem;
-    /* Small text carries more leading on purpose: the line is physically
-       shorter, so the eye needs a clearer vertical step to track back. */
-    line-height: 1.7;
-    letter-spacing: 0.003em;
+    font-size: 0.9375rem;   /* CM runs small for its point size */
+    line-height: 1.68;
+    letter-spacing: 0;
   }
 
   .t-lede {
-    font-size: 1rem;
-    line-height: 1.7;
-    letter-spacing: -0.002em;
+    font-size: 1.0625rem;
+    line-height: 1.66;
+    letter-spacing: 0;
   }
 
-  /* Mono labels. Uppercase at small sizes needs generous tracking or the
-     counters close up and it reads as a smudge. */
+  /* Section and group labels. Set as spaced caps in the serif rather than
+     the typewriter, which is how \textsc reads on a page. */
   .t-label {
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: 0.22em;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
   }
 
+  /* Dates and technical fragments stay in the typewriter — that IS the
+     LaTeX convention for verbatim material. */
   .t-meta {
     font-family: var(--font-mono);
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
     font-weight: 400;
-    letter-spacing: 0.11em;
-    /* Dates line up column-wise only with tabular figures — proportional
-       digits make a stack of years look ragged. */
+    letter-spacing: 0.01em;
     font-variant-numeric: tabular-nums;
   }
 
-  /* Links sit in sentence case. Uppercase mono at this frequency turned every
-     link into a shout and wrapped badly on narrow columns. */
   .t-link {
-    font-size: 0.8125rem;
-    font-weight: 500;
-    letter-spacing: -0.006em;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    letter-spacing: 0;
   }
 
+  /* The section counter, set like a LaTeX sectional number: serif, bold,
+     the same size as the label beside it, in the accent. */
   .t-index {
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: 0.14em;
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
     font-variant-numeric: tabular-nums;
   }
 
-  /* ===== NAV =====
-     No rule to grow, so the active state is carried by the type itself: the
-     tracking opens, the weight lifts and the item steps right. */
+  /* ===== NAV ===== */
   .nav-item {
     display: inline-block;
     transition:
@@ -205,16 +235,12 @@
   }
   .nav-item:hover,
   .nav-item.is-active {
-    letter-spacing: 0.34em;
+    letter-spacing: 0.26em;
     transform: translateX(3px);
   }
-  .nav-item.is-active {
-    font-weight: 600;
-  }
+  .nav-item.is-active { font-weight: 700; }
 
-  /* ===== CARDS =====
-     Hover is a tint and a small lift rather than a border, so nothing draws a
-     box around the content. */
+  /* ===== CARDS ===== */
   .card {
     border-radius: 0.75rem;
     transition:
@@ -226,19 +252,103 @@
     transform: translateY(-2px);
   }
 
-  /* Link arrow nudges along its own diagonal on hover. */
-  .arrow {
-    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .group\/link:hover .arrow {
-    transform: translate(2px, -2px);
-  }
+  .arrow { transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1); }
+  .group\/link:hover .arrow { transform: translate(2px, -2px); }
 }
 
-/* Pointer-tracked wash. The original stylesheet reserved a .glow layer for
-   exactly this and never filled it in. Sized generously and kept very low in
-   opacity so it reads as the page responding to the cursor rather than as an
-   effect. Only mounted for fine pointers. */
+/* ===================================================================
+   THE FOUR MARKS
+
+   Each colour earns a different job, so they read as a system rather
+   than as four accents competing. All of it is scoped to the light
+   theme: night mode is the design as it was, and it never had
+   underlines or outlined chips to begin with.
+   =================================================================== */
+:root:not([data-theme="dark"]) {
+
+  /* PUZZLES — highlight. A marked passage, the way you would run a pen
+     over a line worth keeping. The gradient stops short of the cap
+     height so it sits behind the text rather than over it. */
+  .t-role {
+    /* fit-content because this is a <p>: without it the gradient paints the
+       whole line box and the mark runs on past the full stop to the column
+       edge, which reads as a stray rule rather than a marked passage. */
+    width: fit-content;
+    background-image: linear-gradient(
+      to top,
+      --alpha(var(--mark-puzzles) / 28%) 0.62em,
+      transparent 0.62em
+    );
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  /* PUZZLES — underline. Prose links carry a coloured rule from the
+     font's own metrics, so it clears the descenders instead of cutting
+     through them. */
+  .t-body a,
+  .t-lede a {
+    text-decoration-line: underline;
+    text-decoration-color: var(--mark-puzzles);
+    text-decoration-thickness: from-font;
+    text-underline-offset: 0.16em;
+    text-decoration-skip-ink: auto;
+  }
+  .t-body a:hover,
+  .t-lede a:hover {
+    text-decoration-color: var(--mark-stars);
+  }
+
+  /* PLOWHORSES — outline. The domain tag becomes a rules-of-the-page
+     chip: hairline box, no fill, the way a LaTeX \fbox reads. */
+  .domain-chip {
+    display: inline-block;
+    padding: 0.12em 0.5em;
+    border: 1px solid --alpha(var(--mark-plowhorses) / 55%);
+    border-radius: 2px;
+    color: var(--mark-plowhorses);
+  }
+
+  /* PLOWHORSES — the stack list, same hue, no box, so the two read as
+     one family at two volumes. */
+  .stack > li { color: var(--mark-plowhorses); }
+
+  /* DOGS — already carried by --color-slate-500 for dates and inactive
+     nav. Here it also draws the footnote rule under the footer, the one
+     horizontal that a paper actually earns. */
+  footer.t-meta { color: var(--mark-dogs); }
+
+  /* The counters down the project list are set in the accent, quietly,
+     the way \thesection would be. */
+  .t-index { font-variant-numeric: tabular-nums lining-nums; }
+}
+
+/* ===================================================================
+   THEME TOGGLE
+   =================================================================== */
+.theme-toggle {
+  position: fixed;
+  right: 1.5rem;
+  top: 1.5rem;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.theme-toggle:hover { transform: translateY(-1px); }
+
+/* Pointer-tracked wash. Kept in both themes, but it is the accent that
+   changes with the theme, so on paper it reads as a warm bloom rather
+   than a teal glow. */
 .spotlight {
   position: fixed;
   inset: 0;
@@ -250,8 +360,14 @@
     transparent 45%
   );
 }
+:root:not([data-theme="dark"]) .spotlight {
+  background: radial-gradient(
+    600px circle at var(--mx, -100%) var(--my, -100%),
+    --alpha(var(--mark-puzzles) / 9%),
+    transparent 45%
+  );
+}
 
-/* Appears once the visitor is far enough down that scrolling back is a chore. */
 .to-top {
   position: fixed;
   right: 1.5rem;
@@ -304,36 +420,19 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    /* space-between distributes whatever is left over, and on a short laptop
-       there is nothing left over — the nav and the contact block ended up
-       touching. gap sets a floor the distribution cannot eat into. */
     gap: 2.5rem;
-    /* And if the column still will not fit, it scrolls rather than clipping
-       the email and socials below the fold. Scrollbar hidden so the sidebar
-       does not grow a visible track. */
     overflow-y: auto;
     overscroll-behavior: contain;
     scrollbar-width: none;
   }
-  .sidebar::-webkit-scrollbar {
-    width: 0;
-  }
-  /* Neither block may be compressed to make the other fit. */
-  .sidebar > * {
-    flex-shrink: 0;
-  }
+  .sidebar::-webkit-scrollbar { width: 0; }
+  .sidebar > * { flex-shrink: 0; }
 
-  /* The nav group is the exception: it takes the leftover height of the column
-     and centres the list inside it, which is what lands the items in the middle
-     of the sidebar instead of hanging off the name or sitting on the contact
-     block. Because this group absorbs the free space, space-between above has
-     none left to hand out, so the name and the contact details hold their
-     positions at the two ends on their own.
-
-     It is also the one group allowed to give way when the column runs short —
-     hence the shrink factor and min-height, which a flex item needs before it
-     will size below its content. The name and contact block keep their
-     flex-shrink: 0 and are never compressed. */
+  /* The nav group takes the leftover height and centres its list inside
+     it, which is what lands the items in the middle of the sidebar.
+     Because it absorbs the free space, space-between has none left to
+     distribute, so the name holds the top and the contact block the foot
+     on their own. */
   .sidebar .nav-mid {
     flex: 1 1 auto;
     align-items: center;
@@ -342,17 +441,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+  html { scroll-behavior: auto; }
   .reveal {
     opacity: 1;
     transform: none;
     transition: none;
   }
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
