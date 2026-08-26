@@ -1,17 +1,20 @@
 @import "tailwindcss";
 
 /* ===================================================================
-   COMPUTER MODERN
+   COMPUTER MODERN — light theme only
 
    Declared by hand rather than importing computer-modern's own
    stylesheets. Those ship `font-style: roman`, which is not a valid CSS
-   value, and pair every woff2 with a ttf roughly three times the size —
-   both of which Vite would bundle. These four faces are the ones the
-   page actually uses, woff2 only, ~790KB total.
+   value, and pair every woff2 with a ttf roughly three times the size,
+   both of which Vite would bundle. woff2 only here.
 
    The family has no 400 cut: its regular weight is 500. Declaring that
    file AS 400 is what stops the browser synthesising a fake bold for
    body copy, and leaves the real 700 for headings.
+
+   These faces cost nothing in night mode — a browser only downloads a
+   face something on the page actually uses, and in the dark theme
+   nothing references them.
    =================================================================== */
 @font-face {
   font-family: "CMU Serif";
@@ -43,11 +46,12 @@
 }
 
 @theme {
-  /* Computer Modern in both themes. Swapping typeface with the colour
-     scheme would reflow the page on every toggle, and a LaTeX paper that
-     stops being one in the dark is not a LaTeX paper. */
-  --font-sans: "CMU Serif", "Latin Modern Roman", Georgia, "Times New Roman", serif;
-  --font-mono: "CMU Typewriter Text", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Night mode's stack, untouched. Inter carries the dark theme because of
+     its optical-size axis: as the size grows the face tightens its spacing
+     and closes its apertures, so a headline is a different drawing rather
+     than body text scaled up. */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-display: var(--font-sans);
 }
 
@@ -56,37 +60,46 @@
 
    Tailwind 4 compiles every colour utility to var(--color-*) — verified
    in the build output: .text-slate-100{color:var(--color-slate-100)}.
-   So the whole page re-themes by redefining those variables, and not one
-   class in App.jsx has to change.
+   The same is true of --font-sans. So both palette and typeface swap by
+   redefining variables, and not one class in App.jsx has to change.
 
-   The overrides sit under :not([data-theme="dark"]) on purpose. Night
-   mode is therefore the ABSENCE of an override: it renders on Tailwind's
-   own untouched slate/teal ramp, which is the design as it already was.
-   Nothing is transcribed by hand, so nothing can drift out of sync.
+   Every override sits under :not([data-theme="dark"]). Night mode is
+   therefore the ABSENCE of an override: Tailwind's own slate/teal ramp,
+   Inter, JetBrains Mono, and the type scale exactly as it was. Nothing
+   is transcribed by hand, so nothing can drift.
    =================================================================== */
 :root {
-  --mark-stars: #9a3412;
-  --mark-puzzles: #a78100;
-  --mark-plowhorses: #5f911f;
-  --mark-dogs: #6d6d72;
+  --mark-accent: #0f6b60;      /* deep petrol — the day counterpart to teal-300 */
+  --mark-puzzles: #96760a;     /* highlight */
+  --mark-plowhorses: #4d7a18;  /* outline */
+  --mark-dogs: #5f6166;        /* muted */
 }
 
 :root:not([data-theme="dark"]) {
-  /* Not pure white. Printed stock is warm, and #fff under a serif this
-     high-contrast glares. */
-  --paper: #fbfaf6;
+  /* Computer Modern is a display face here, not the document face. It was
+     cut for letterpress, where ink spreads into the paper; on a backlit
+     screen at reading sizes its hairlines go spindly and the page gets
+     tiring. So it carries the name, the quote and the titles — where it is
+     large enough to look like itself — and Inter carries everything read at
+     length, exactly as it does at night. --font-sans and --font-mono are
+     deliberately NOT overridden. */
+  --font-paper: "CMU Serif", "Latin Modern Roman", Georgia, "Times New Roman", serif;
 
-  --color-slate-900: var(--paper);   /* page */
-  --color-slate-800: #e8e3d6;        /* card wash, used at 45% alpha */
-  --color-slate-600: #9b9b93;        /* footer, list counters */
-  --color-slate-500: var(--mark-dogs); /* dates, inactive nav */
-  --color-slate-400: #3f3f39;        /* body */
-  --color-slate-300: #2b2b25;        /* lede */
-  --color-slate-200: #1c1c17;        /* links, subheads */
-  --color-slate-100: #12120d;        /* headings, the name */
+  /* Warm ivory, not white. Printed stock is warm, and #fff under a serif
+     this high-contrast glares. */
+  --paper: #faf8f2;
 
-  --color-teal-300: var(--mark-stars); /* every accent */
-  --color-teal-900: var(--paper);      /* type sitting ON an accent fill */
+  --color-slate-900: var(--paper);      /* page */
+  --color-slate-800: #e4ddcb;           /* card wash, used at 45% alpha */
+  --color-slate-600: #85837a;           /* footer, list counters */
+  --color-slate-500: var(--mark-dogs);  /* dates, inactive nav */
+  --color-slate-400: #33383a;           /* body */
+  --color-slate-300: #1c2225;           /* lede */
+  --color-slate-200: #11171a;           /* links, subheads */
+  --color-slate-100: #080c0e;           /* headings, the name */
+
+  --color-teal-300: var(--mark-accent); /* every accent */
+  --color-teal-900: var(--paper);       /* type sitting ON an accent fill */
 }
 
 @layer base {
@@ -99,9 +112,11 @@
     font-family: var(--font-sans);
     font-kerning: normal;
     font-variant-ligatures: common-ligatures contextual;
-    /* Grayscale smoothing is dropped in the light theme further down:
-       dark-on-light wants the extra weight that subpixel rendering gives,
-       and CM is a thin face to begin with. */
+    /* cv11 (single-storey a) and ss01 (rounded quotes) are Inter features
+       and have no CSS property of their own, which is what the raw syntax
+       is for. */
+    font-feature-settings: "cv11", "ss01";
+    font-optical-sizing: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -120,57 +135,47 @@
     border-radius: 3px;
   }
 
-  /* CM was drawn for print, where the ink spreads. On a backlit screen at
-     dark-on-light it reads anaemic under grayscale smoothing, so the light
-     theme hands rendering back to the OS. */
-  :root:not([data-theme="dark"]) body {
-    -webkit-font-smoothing: auto;
-    -moz-osx-font-smoothing: auto;
-  }
 }
 
 @layer components {
-  /* ===== TYPE SCALE =====
-     Retuned for Computer Modern. Inter wanted heavy negative tracking at
-     display sizes because its default fit is loose; CM is fitted for
-     letterpress and is already tight, so the same values would jam the
-     letters together. */
+  /* ===== TYPE SCALE — night mode, unchanged =====
+     Tracking moves inversely to size: large type needs negative tracking
+     to close the gaps that scaling opens up, small type needs positive
+     tracking to stay legible. */
 
   .t-display {
     font-family: var(--font-display);
     font-size: clamp(2.4rem, 4.2vw, 3.4rem);
-    font-weight: 700;
-    line-height: 1.05;
-    letter-spacing: -0.008em;
-    margin-left: -0.02em;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.033em;
+    margin-left: -0.035em;
   }
 
   .t-role {
     font-family: var(--font-display);
-    font-size: clamp(1.0625rem, 1.4vw, 1.1875rem);
+    font-size: clamp(1rem, 1.35vw, 1.125rem);
     font-weight: 400;
-    font-style: italic;   /* a pulled quote is italic in a paper */
-    letter-spacing: 0;
-    line-height: 1.5;
+    letter-spacing: -0.012em;
+    line-height: 1.45;
   }
 
   .t-heading {
     font-family: var(--font-sans);
-    font-size: 1.1875rem;
-    font-weight: 700;
-    letter-spacing: -0.004em;
-    line-height: 1.3;
+    font-size: 1.125rem;
+    font-weight: 600;
+    letter-spacing: -0.017em;
+    line-height: 1.35;
   }
 
   .t-subheading {
     font-family: var(--font-sans);
-    font-size: 1.0625rem;
-    font-weight: 700;
-    letter-spacing: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.013em;
     line-height: 1.4;
   }
 
-  /* ===== MEASURE ===== */
   .t-body,
   .t-lede {
     max-width: 34em;
@@ -178,50 +183,44 @@
   }
 
   .t-body {
-    font-size: 0.9375rem;   /* CM runs small for its point size */
-    line-height: 1.68;
-    letter-spacing: 0;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    letter-spacing: 0.003em;
   }
 
   .t-lede {
-    font-size: 1.0625rem;
-    line-height: 1.66;
-    letter-spacing: 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    letter-spacing: -0.002em;
   }
 
-  /* Section and group labels. Set as spaced caps in the serif rather than
-     the typewriter, which is how \textsc reads on a page. */
   .t-label {
-    font-family: var(--font-sans);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.16em;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
   }
 
-  /* Dates and technical fragments stay in the typewriter — that IS the
-     LaTeX convention for verbatim material. */
   .t-meta {
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     font-weight: 400;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.11em;
     font-variant-numeric: tabular-nums;
   }
 
   .t-link {
-    font-size: 0.9375rem;
-    font-weight: 400;
-    letter-spacing: 0;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: -0.006em;
   }
 
-  /* The section counter, set like a LaTeX sectional number: serif, bold,
-     the same size as the label beside it, in the accent. */
   .t-index {
-    font-family: var(--font-sans);
-    font-size: 0.8125rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
     font-variant-numeric: tabular-nums;
   }
 
@@ -235,10 +234,10 @@
   }
   .nav-item:hover,
   .nav-item.is-active {
-    letter-spacing: 0.26em;
+    letter-spacing: 0.34em;
     transform: translateX(3px);
   }
-  .nav-item.is-active { font-weight: 700; }
+  .nav-item.is-active { font-weight: 600; }
 
   /* ===== CARDS ===== */
   .card {
@@ -257,74 +256,142 @@
 }
 
 /* ===================================================================
-   THE FOUR MARKS
+   THE PAPER — light theme only
 
-   Each colour earns a different job, so they read as a system rather
-   than as four accents competing. All of it is scoped to the light
-   theme: night mode is the design as it was, and it never had
-   underlines or outlined chips to begin with.
+   Retuning for Computer Modern, not just recolouring. Inter wants heavy
+   negative tracking at display sizes because its default fit is loose;
+   CM is fitted for letterpress and is already tight, so the same values
+   would jam the letters together. Sizes run a step larger because CM
+   sets small for its nominal point size.
    =================================================================== */
 :root:not([data-theme="dark"]) {
 
-  /* PUZZLES — highlight. A marked passage, the way you would run a pen
-     over a line worth keeping. The gradient stops short of the cap
-     height so it sits behind the text rather than over it. */
-  .t-role {
-    /* fit-content because this is a <p>: without it the gradient paints the
-       whole line box and the mark runs on past the full stop to the column
-       edge, which reads as a stray rule rather than a marked passage. */
-    width: fit-content;
-    background-image: linear-gradient(
-      to top,
-      --alpha(var(--mark-puzzles) / 28%) 0.62em,
-      transparent 0.62em
-    );
-    box-decoration-break: clone;
-    -webkit-box-decoration-break: clone;
+  /* Computer Modern only where it is large enough to look like itself.
+     Body copy, nav, labels, dates and links keep Inter and JetBrains Mono
+     from the base scale — the same faces night mode uses — so nothing that
+     gets read at length is set in a letterpress face. */
+  .t-display,
+  .t-role,
+  .t-heading,
+  .t-subheading {
+    font-family: var(--font-paper);
   }
 
-  /* PUZZLES — underline. Prose links carry a coloured rule from the
-     font's own metrics, so it clears the descenders instead of cutting
-     through them. */
+  .t-display {
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.008em;
+    margin-left: -0.02em;
+  }
+
+  .t-role {
+    font-size: clamp(1.0625rem, 1.4vw, 1.1875rem);
+    font-style: italic;       /* a pulled quote is italic on a page */
+    letter-spacing: 0;
+    line-height: 1.5;
+    /* Overrides the mt-5 utility. CM sets on a tighter body than Inter and
+       the name runs at line-height 1.05, so the same 1.25rem that looks
+       right at night leaves the quote adrift here. Pulled up so it reads as
+       an epigraph belonging to the name rather than a separate line. */
+    margin-top: 0.7rem;
+  }
+
+  .t-heading {
+    font-size: 1.1875rem;
+    font-weight: 700;
+    letter-spacing: -0.004em;
+    line-height: 1.3;
+  }
+
+  .t-subheading {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  /* ---- the marks ----
+     Each colour does a different job, so they read as a system rather
+     than four accents competing. All light-only: night never had
+     underlines or outlined chips. */
+
+  /* No highlight on the quote. The mark and the italic were two devices
+     competing over one short line, and the accent underneath muddied
+     against the wash. The italic alone carries it.
+     --mark-puzzles now does one job only: the rule under prose links. */
+
+  /* UNDERLINE. Prose links carry a coloured rule taken from the font's own
+     metrics, so it clears descenders instead of cutting through them. */
   .t-body a,
   .t-lede a {
     text-decoration-line: underline;
-    text-decoration-color: var(--mark-puzzles);
+    text-decoration-color: --alpha(var(--mark-puzzles) / 70%);
     text-decoration-thickness: from-font;
     text-underline-offset: 0.16em;
     text-decoration-skip-ink: auto;
   }
   .t-body a:hover,
-  .t-lede a:hover {
-    text-decoration-color: var(--mark-stars);
-  }
+  .t-lede a:hover { text-decoration-color: var(--mark-accent); }
 
-  /* PLOWHORSES — outline. The domain tag becomes a rules-of-the-page
-     chip: hairline box, no fill, the way a LaTeX \fbox reads. */
+  /* OUTLINE. The domain tag becomes a hairline box, no fill — how \fbox
+     reads. */
   .domain-chip {
     display: inline-block;
     padding: 0.12em 0.5em;
-    border: 1px solid --alpha(var(--mark-plowhorses) / 55%);
+    border: 1px solid --alpha(var(--mark-plowhorses) / 60%);
     border-radius: 2px;
     color: var(--mark-plowhorses);
   }
 
-  /* PLOWHORSES — the stack list, same hue, no box, so the two read as
-     one family at two volumes. */
+  /* Same hue, no box, so the two read as one family at two volumes. */
   .stack > li { color: var(--mark-plowhorses); }
-
-  /* DOGS — already carried by --color-slate-500 for dates and inactive
-     nav. Here it also draws the footnote rule under the footer, the one
-     horizontal that a paper actually earns. */
-  footer.t-meta { color: var(--mark-dogs); }
-
-  /* The counters down the project list are set in the accent, quietly,
-     the way \thesection would be. */
-  .t-index { font-variant-numeric: tabular-nums lining-nums; }
 }
 
 /* ===================================================================
-   THEME TOGGLE
+   ORNAMENT
+
+   The hibiscus sits behind the tail of the name, over the final r. Light
+   theme only: its gold, rose and crimson belong to paper, and against the
+   slate ground they would read as a stain. Night mode stays as it was.
+
+   left:100% anchors it to the right edge of the name's shrink-wrapped
+   wrapper — i.e. exactly where the text stops — and the negative translate
+   pulls it back so it overlaps the r rather than floating clear of it.
+   There is column to spare on this side, so unlike the left edge nothing
+   is clipped by the sidebar's overflow.
+
+   p5.brush paints into a canvas this element hosts. The canvas is created at
+   120 units with pixelDensity 1 — its brush weights are tuned to that — so it
+   is scaled to the box with CSS rather than by making the canvas bigger.
+   =================================================================== */
+.motif-name {
+  display: none;
+  position: absolute;
+  z-index: 0;
+  left: 100%;
+  top: 50%;
+  transform: translate(-46%, -56%);
+  width: 7rem;
+  height: 7rem;
+  opacity: 0.55;
+  /* Nothing the visitor does should touch it: no pointer target, no inherited
+     transition to animate, and no place for a focus ring to land. */
+  pointer-events: none;
+  transition: none;
+  user-select: none;
+}
+.motif-name canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  outline: none;
+}
+:root:not([data-theme="dark"]) .motif-name {
+  display: block;
+}
+
+/* ===================================================================
+   CHROME
    =================================================================== */
 .theme-toggle {
   position: fixed;
@@ -336,9 +403,6 @@
   width: 2.25rem;
   height: 2.25rem;
   border-radius: 9999px;
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  line-height: 1;
   transition:
     background-color 0.25s ease,
     color 0.25s ease,
@@ -346,9 +410,6 @@
 }
 .theme-toggle:hover { transform: translateY(-1px); }
 
-/* Pointer-tracked wash. Kept in both themes, but it is the accent that
-   changes with the theme, so on paper it reads as a warm bloom rather
-   than a teal glow. */
 .spotlight {
   position: fixed;
   inset: 0;
@@ -363,7 +424,7 @@
 :root:not([data-theme="dark"]) .spotlight {
   background: radial-gradient(
     600px circle at var(--mx, -100%) var(--my, -100%),
-    --alpha(var(--mark-puzzles) / 9%),
+    --alpha(var(--mark-accent) / 7%),
     transparent 45%
   );
 }
@@ -429,10 +490,9 @@
   .sidebar > * { flex-shrink: 0; }
 
   /* The nav group takes the leftover height and centres its list inside
-     it, which is what lands the items in the middle of the sidebar.
-     Because it absorbs the free space, space-between has none left to
-     distribute, so the name holds the top and the contact block the foot
-     on their own. */
+     it. Because it absorbs the free space, space-between has none left to
+     distribute, so the name holds the top and contact the foot on their
+     own. */
   .sidebar .nav-mid {
     flex: 1 1 auto;
     align-items: center;

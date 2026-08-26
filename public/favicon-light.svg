@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Shahzeb Umer">
+  <!-- Day counterpart to favicon.svg. Same solid shapes and heavy weights: a
+       favicon is read at 16px, where thin strokes collapse into mush.
+
+       It keeps its own tile rather than sitting transparent on the tab strip.
+       The strip's background follows the OS theme, not the site's, so a
+       transparent icon would vanish whenever the two disagree. The tile makes
+       the icon legible either way. -->
+  <rect width="64" height="64" rx="15" fill="#faf8f2"/>
+  <circle cx="32" cy="25" r="9.5" fill="#0f6b60"/>
+  <path d="M13.5 52.5c0-10.2 8.3-16.5 18.5-16.5s18.5 6.3 18.5 16.5a2 2 0 0 1-2 2h-33a2 2 0 0 1-2-2z" fill="#0f6b60"/>
+</svg>

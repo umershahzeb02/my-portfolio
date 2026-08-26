@@ -8,6 +8,7 @@ import {
   education,
 } from "./data";
 import Socials from "./Socials";
+import Hibiscus from "./Hibiscus";
 
 const NAV = [
   ["About", "about"],
@@ -116,6 +117,11 @@ function ThemeToggle() {
   const toggle = () => {
     const next = dark ? "light" : "dark";
     document.documentElement.dataset.theme = next;
+    /* Defined by the pre-paint script in index.html, so the favicon is already
+       correct on first load and this only has to keep up with the toggle. */
+    if (typeof window.__setFavicon === "function") {
+      window.__setFavicon(next === "dark");
+    }
     try {
       localStorage.setItem("theme", next);
     } catch {
@@ -218,9 +224,15 @@ function Sidebar() {
 
   return (
     <header className="sidebar py-12 lg:py-16">
-      {/* Only the identity sits up top. */}
+      {/* Only the identity sits up top. The name gets its own w-fit wrapper so
+          the ornament can be pinned to the END of the text — left:100% of a
+          shrink-wrapped box lands just past the final r. On a full-width block
+          it would have landed at the column edge instead. */}
       <div>
-        <h1 className="t-display text-slate-100">{profile.name}</h1>
+        <div className="relative w-fit">
+          <h1 className="t-display relative z-10 text-slate-100">{profile.name}</h1>
+          <Hibiscus className="motif-name" />
+        </div>
         <p className="t-role mt-5 text-teal-300">{profile.tagline}</p>
       </div>
 
@@ -466,9 +478,6 @@ export default function App() {
           <Experience />
           <Projects />
           <Writing />
-          <footer className="t-meta pb-16 text-slate-600">
-            <p>Built with React, Tailwind CSS and Vite. Deployed on GitHub Pages.</p>
-          </footer>
         </main>
       </div>
 

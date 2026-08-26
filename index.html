@@ -28,15 +28,48 @@
     <meta property="og:url" content="https://umershahzeb02.github.io/my-portfolio/" />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <!-- Computer Modern is bundled from node_modules and declared in
-         index.css, so there is nothing to fetch from a font CDN. The Inter
-         and JetBrains Mono links that used to sit here were two DNS lookups
-         and a render-blocking stylesheet for faces the page no longer uses. -->
+    <!-- Night mode's faces. Computer Modern is bundled from node_modules and
+         declared in index.css instead; a browser only downloads a face the
+         page actually references, so each theme pulls its own and neither
+         pays for the other. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- Runs before first paint, so the page never flashes the wrong theme.
          A stored choice wins; failing that, follow the operating system.
          Anything unexpected falls through to the light paper. -->
     <script>
+      /* Swaps the SVG favicon to match the theme. The <link> element is
+         replaced rather than having its href reassigned: browsers cache
+         favicons hard, and mutating href in place is frequently ignored.
+
+         Only the SVG icon is swapped. The .ico fallback below it stays put —
+         it exists for browsers that cannot render an SVG favicon at all, and
+         those are not the browsers that will follow a theme change. */
+      window.__setFavicon = function (dark) {
+        try {
+          var href = dark
+            ? "/my-portfolio/favicon.svg"
+            : "/my-portfolio/favicon-light.svg";
+          var old = document.querySelector(
+            'link[rel="icon"][type="image/svg+xml"]'
+          );
+          if (old && old.getAttribute("href") === href) return;
+          var link = document.createElement("link");
+          link.rel = "icon";
+          link.type = "image/svg+xml";
+          link.href = href;
+          if (old) old.remove();
+          document.head.appendChild(link);
+        } catch (e) {
+          /* leave whatever the markup declared */
+        }
+      };
+
       (function () {
         try {
           var stored = localStorage.getItem("theme");
@@ -44,6 +77,7 @@
             ? stored === "dark"
             : window.matchMedia("(prefers-color-scheme: dark)").matches;
           document.documentElement.dataset.theme = dark ? "dark" : "light";
+          window.__setFavicon(dark);
         } catch (e) {
           document.documentElement.dataset.theme = "light";
         }
