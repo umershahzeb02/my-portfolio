@@ -1,8 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Shahzeb Umer">
-  <!-- Solid shapes and heavy weights on purpose: a favicon is read at 16px, where
-       thin strokes and fine detail collapse into mush. Slate ground and teal
-       figure are the site's own palette. -->
-  <rect width="64" height="64" rx="15" fill="#0f172a"/>
-  <circle cx="32" cy="25" r="9.5" fill="#5eead4"/>
-  <path d="M13.5 52.5c0-10.2 8.3-16.5 18.5-16.5s18.5 6.3 18.5 16.5a2 2 0 0 1-2 2h-33a2 2 0 0 1-2-2z" fill="#5eead4"/>
+  <!-- Night icon. Solid shapes and heavy weights on purpose: a favicon is read
+       at 16px, where thin strokes and fine detail collapse into mush.
+
+       Colours track the night theme in index.css — charcoal ground, jade
+       figure. They were left behind on Tailwind's slate and teal when the
+       theme moved off that ramp, so the tab icon went on advertising a palette
+       the site no longer used. Keep them in step with --ground and
+       --color-teal-300.
+
+       It keeps its own tile rather than sitting transparent on the tab strip:
+       the strip's background follows the OS theme, not the site's, so a
+       transparent icon would vanish whenever the two disagree. -->
+  <rect width="64" height="64" rx="15" fill="#1e1f21"/>
+  <circle cx="32" cy="25" r="9.5" fill="#5ec5b2"/>
+  <path d="M13.5 52.5c0-10.2 8.3-16.5 18.5-16.5s18.5 6.3 18.5 16.5a2 2 0 0 1-2 2h-33a2 2 0 0 1-2-2z" fill="#5ec5b2"/>
 </svg>
