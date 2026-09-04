@@ -392,9 +392,9 @@
   transform: translate(-46%, -56%);
   width: 7rem;
   height: 7rem;
-  /* Night sits it back: the same rose and gold read brighter against slate
-     than against ivory. */
-  opacity: 0.4;
+  /* Night now paints its own gold version rather than reusing the rose one,
+     so it no longer has to be held back as far to stop it shouting. */
+  opacity: 0.5;
   /* Nothing the visitor does should touch it: no pointer target, no inherited
      transition to animate, and no place for a focus ring to land. */
   pointer-events: none;
