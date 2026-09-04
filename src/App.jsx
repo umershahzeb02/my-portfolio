@@ -8,7 +8,6 @@ import {
   education,
 } from "./data";
 import Socials from "./Socials";
-import Hibiscus from "./Hibiscus";
 
 const NAV = [
   ["About", "about"],
@@ -231,7 +230,10 @@ function Sidebar() {
       <div>
         <div className="relative w-fit">
           <h1 className="t-display relative z-10 text-slate-100">{profile.name}</h1>
-          <Hibiscus className="motif-name" />
+          {/* Ornament. A div, not a component: the flower is a
+              pre-rendered image painted by the stylesheet, so there is
+              nothing to render and nothing to execute. */}
+          <div className="motif-name" aria-hidden="true" />
         </div>
         <p className="t-role mt-5 text-teal-300">{profile.tagline}</p>
       </div>

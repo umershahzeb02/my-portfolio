@@ -401,16 +401,21 @@
   transition: none;
   user-select: none;
   outline: none;
-}
-.motif-name canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  outline: none;
+
+  /* Pre-rendered by `npm run render:flowers`, one image per theme. Referenced
+     from CSS rather than an <img> so the browser fetches only the one the
+     active theme actually uses, and so the flower needs no JavaScript at all —
+     it is painted by the stylesheet, on first paint, with nothing to execute.
+     Paths are relative to this file, which lets Vite fingerprint them and
+     rewrite the base path for GitHub Pages. */
+  background-image: url("./assets/hibiscus-dark.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 :root:not([data-theme="dark"]) .motif-name {
   opacity: 0.55;
+  background-image: url("./assets/hibiscus-light.png");
 }
 
 /* ===================================================================
