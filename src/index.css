@@ -63,42 +63,87 @@
    The same is true of --font-sans. So both palette and typeface swap by
    redefining variables, and not one class in App.jsx has to change.
 
-   Every override sits under :not([data-theme="dark"]). Night mode is
-   therefore the ABSENCE of an override: Tailwind's own slate/teal ramp,
-   Inter, JetBrains Mono, and the type scale exactly as it was. Nothing
-   is transcribed by hand, so nothing can drift.
+   Night is defined on :root and day overrides it under
+   :not([data-theme="dark"]), which wins on specificity.
+
+   Both palettes are drawn from ONE set of hues — petrol, gold, green, and a
+   warm neutral — so the themes read as the same page at two times of day
+   rather than as two designs. Night is deliberately NOT Tailwind's default
+   slate: that ramp is blue, and a blue ground under a warm ivory day made
+   the two look unrelated. This ground is a near-black with a faint green
+   cast, the same family as the petrol accent.
    =================================================================== */
 :root {
-  --mark-accent: #0f6b60;      /* deep petrol — the day counterpart to teal-300 */
-  --mark-puzzles: #96760a;     /* highlight */
-  --mark-plowhorses: #4d7a18;  /* outline */
-  --mark-dogs: #5f6166;        /* muted */
-}
-
-:root:not([data-theme="dark"]) {
   /* Computer Modern is a display face here, not the document face. It was
      cut for letterpress, where ink spreads into the paper; on a backlit
      screen at reading sizes its hairlines go spindly and the page gets
      tiring. So it carries the name, the quote and the titles — where it is
      large enough to look like itself — and Inter carries everything read at
-     length, exactly as it does at night. --font-sans and --font-mono are
-     deliberately NOT overridden. */
+     length. Both themes, so the two are one design in two palettes rather
+     than two designs. --font-sans and --font-mono are never overridden. */
   --font-paper: "CMU Serif", "Latin Modern Roman", Georgia, "Times New Roman", serif;
 
+  /* ---- NIGHT ----
+     The day palette turned over: ivory ground becomes near-black ink, black
+     type becomes warm off-white, and the deep petrol accent rises to a jade
+     bright enough to carry on a dark ground. Every value keeps the warm,
+     slightly green cast, which is what stops it reading as generic blue-grey
+     dark mode. */
+  /* Charcoal, lifted off pure black so the card wash has somewhere to sit and
+     the type is not glaring out of a void. Neutral rather than tinted: the
+     jade, gold and green marks carry the colour, and a tinted ground competed
+     with them. The greys above it keep a faint warm cast so they still belong
+     to the day's ivory.
+
+     Every pair below was measured against this ground — all clear WCAG AA for
+     body text except the list counters, which clear the 3:1 large/incidental
+     threshold at 3.58. */
+  --ground: #1e1f21;
+
+  --color-slate-900: var(--ground);   /* page */
+  --color-slate-800: #2b2d30;         /* card wash, used at 45% alpha */
+  --color-slate-600: #78756d;         /* list counters                3.58 */
+  --color-slate-500: #9a978e;         /* dates, inactive nav          5.65 */
+  --color-slate-400: #c6c3bb;         /* body                         9.37 */
+  --color-slate-300: #dcd9d2;         /* lede                        11.70 */
+  --color-slate-200: #ebe9e3;         /* links, subheads             13.59 */
+  --color-slate-100: #f6f4ee;         /* headings, the name          15.00 */
+
+  --color-teal-300: #5ec5b2;          /* jade — day's petrol          7.94 */
+  --color-teal-900: #0f1f1c;          /* type sitting ON an accent fill */
+
+  /* Same jobs as day, lifted for a dark ground: the day values are mid-tones
+     chosen against ivory and would sink into the ink. */
+  --mark-underline: #cfae62;   /* rule beneath prose links     7.76 */
+  --mark-outline: #94b566;     /* hairline box on the domain tag  7.12 */
+  /* Softened variants carry their alpha in the hex. Neither --alpha() nor
+     color-mix() survives here: these rules sit outside Tailwind's layers, and
+     the minifier strips color-mix out of border declarations, silently leaving
+     a full-strength colour. An 8-digit hex cannot be optimised away. */
+  --mark-underline-soft: #cfae62b3;   /* 70% */
+  --mark-outline-soft: #94b56699;     /* 60% */
+}
+
+:root:not([data-theme="dark"]) {
   /* Warm ivory, not white. Printed stock is warm, and #fff under a serif
      this high-contrast glares. */
   --paper: #faf8f2;
 
+  --mark-underline: #96760a;
+  --mark-outline: #4d7a18;
+  --mark-underline-soft: #96760ab3;   /* 70% */
+  --mark-outline-soft: #4d7a1899;     /* 60% */
+
   --color-slate-900: var(--paper);      /* page */
   --color-slate-800: #e4ddcb;           /* card wash, used at 45% alpha */
   --color-slate-600: #85837a;           /* footer, list counters */
-  --color-slate-500: var(--mark-dogs);  /* dates, inactive nav */
+  --color-slate-500: #5f6166;           /* dates, inactive nav */
   --color-slate-400: #33383a;           /* body */
   --color-slate-300: #1c2225;           /* lede */
   --color-slate-200: #11171a;           /* links, subheads */
   --color-slate-100: #080c0e;           /* headings, the name */
 
-  --color-teal-300: var(--mark-accent); /* every accent */
+  --color-teal-300: #0f6b60;            /* deep petrol — day's teal-300 */
   --color-teal-900: var(--paper);       /* type sitting ON an accent fill */
 }
 
@@ -138,41 +183,53 @@
 }
 
 @layer components {
-  /* ===== TYPE SCALE — night mode, unchanged =====
-     Tracking moves inversely to size: large type needs negative tracking
-     to close the gaps that scaling opens up, small type needs positive
-     tracking to stay legible. */
+  /* ===== TYPE SCALE =====
+     Display classes are set in Computer Modern in BOTH themes, and tuned
+     for it: Inter wants heavy negative tracking because its default fit is
+     loose, whereas CM is fitted for letterpress and already tight, so
+     Inter's values would jam the letters together. Sizes run a step larger
+     because CM sets small for its nominal point size.
+
+     Body, nav, labels and dates stay on Inter and JetBrains Mono — nothing
+     read at length is set in a letterpress face. */
 
   .t-display {
-    font-family: var(--font-display);
+    font-family: var(--font-paper);
     font-size: clamp(2.4rem, 4.2vw, 3.4rem);
-    font-weight: 600;
-    line-height: 1;
-    letter-spacing: -0.033em;
-    margin-left: -0.035em;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.008em;
+    /* Optical alignment: the S carries a left side bearing, so metric
+       alignment leaves it looking indented against the copy beneath. */
+    margin-left: -0.02em;
   }
 
   .t-role {
-    font-family: var(--font-display);
-    font-size: clamp(1rem, 1.35vw, 1.125rem);
+    font-family: var(--font-paper);
+    font-size: clamp(1.0625rem, 1.4vw, 1.1875rem);
     font-weight: 400;
-    letter-spacing: -0.012em;
-    line-height: 1.45;
+    font-style: italic;          /* a pulled quote is italic on a page */
+    letter-spacing: 0;
+    line-height: 1.5;
+    /* Overrides the mt-5 utility. CM sets on a tighter body and the name
+       runs at line-height 1.05, so 1.25rem leaves the quote adrift. Pulled
+       up to read as an epigraph belonging to the name. */
+    margin-top: 0.7rem;
   }
 
   .t-heading {
-    font-family: var(--font-sans);
-    font-size: 1.125rem;
-    font-weight: 600;
-    letter-spacing: -0.017em;
-    line-height: 1.35;
+    font-family: var(--font-paper);
+    font-size: 1.1875rem;
+    font-weight: 700;
+    letter-spacing: -0.004em;
+    line-height: 1.3;
   }
 
   .t-subheading {
-    font-family: var(--font-sans);
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: -0.013em;
+    font-family: var(--font-paper);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: 0;
     line-height: 1.4;
   }
 
@@ -256,102 +313,59 @@
 }
 
 /* ===================================================================
-   THE PAPER — light theme only
+   THE MARKS
 
-   Retuning for Computer Modern, not just recolouring. Inter wants heavy
-   negative tracking at display sizes because its default fit is loose;
-   CM is fitted for letterpress and is already tight, so the same values
-   would jam the letters together. Sizes run a step larger because CM
-   sets small for its nominal point size.
+   Each colour does one job, so they read as a system rather than as
+   accents competing. These now apply in BOTH themes: the design language
+   is shared and only the palette differs, which is what makes night and
+   day read as one site in two registers rather than two designs.
+   --mark-* is redefined per theme at the top of this file.
    =================================================================== */
-:root:not([data-theme="dark"]) {
 
-  /* Computer Modern only where it is large enough to look like itself.
-     Body copy, nav, labels, dates and links keep Inter and JetBrains Mono
-     from the base scale — the same faces night mode uses — so nothing that
-     gets read at length is set in a letterpress face. */
-  .t-display,
-  .t-role,
-  .t-heading,
-  .t-subheading {
-    font-family: var(--font-paper);
-  }
+/* UNDERLINE. Prose links carry a coloured rule taken from the font's own
+   metrics, so it clears descenders instead of cutting through them. */
+.t-body a,
+.t-lede a {
+  text-decoration-line: underline;
+  /* color-mix, not Tailwind's --alpha(): these rules live outside the layers
+     where that function is processed, and it silently compiled away to a
+     full-strength var(), losing the intended softening. */
+  text-decoration-color: var(--mark-underline-soft);
+  text-decoration-thickness: from-font;
+  text-underline-offset: 0.16em;
+  text-decoration-skip-ink: auto;
+}
+.t-body a:hover,
+.t-lede a:hover {
+  text-decoration-color: var(--color-teal-300);
+}
 
-  .t-display {
-    font-weight: 700;
-    line-height: 1.05;
-    letter-spacing: -0.008em;
-    margin-left: -0.02em;
-  }
+/* OUTLINE. The domain tag becomes a hairline box, no fill — how \fbox
+   reads on a page. */
+.domain-chip {
+  display: inline-block;
+  padding: 0.12em 0.5em;
+  /* Longhand, not the `border` shorthand: the minifier strips color-mix() out
+     of the shorthand and leaves a full-strength var(), which quietly loses the
+     softening. It survives on a longhand, as it does on text-decoration-color
+     below. */
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--mark-outline-soft);
+  border-radius: 2px;
+  color: var(--mark-outline);
+}
 
-  .t-role {
-    font-size: clamp(1.0625rem, 1.4vw, 1.1875rem);
-    font-style: italic;       /* a pulled quote is italic on a page */
-    letter-spacing: 0;
-    line-height: 1.5;
-    /* Overrides the mt-5 utility. CM sets on a tighter body than Inter and
-       the name runs at line-height 1.05, so the same 1.25rem that looks
-       right at night leaves the quote adrift here. Pulled up so it reads as
-       an epigraph belonging to the name rather than a separate line. */
-    margin-top: 0.7rem;
-  }
-
-  .t-heading {
-    font-size: 1.1875rem;
-    font-weight: 700;
-    letter-spacing: -0.004em;
-    line-height: 1.3;
-  }
-
-  .t-subheading {
-    font-size: 1.0625rem;
-    font-weight: 700;
-    letter-spacing: 0;
-  }
-
-  /* ---- the marks ----
-     Each colour does a different job, so they read as a system rather
-     than four accents competing. All light-only: night never had
-     underlines or outlined chips. */
-
-  /* No highlight on the quote. The mark and the italic were two devices
-     competing over one short line, and the accent underneath muddied
-     against the wash. The italic alone carries it.
-     --mark-puzzles now does one job only: the rule under prose links. */
-
-  /* UNDERLINE. Prose links carry a coloured rule taken from the font's own
-     metrics, so it clears descenders instead of cutting through them. */
-  .t-body a,
-  .t-lede a {
-    text-decoration-line: underline;
-    text-decoration-color: --alpha(var(--mark-puzzles) / 70%);
-    text-decoration-thickness: from-font;
-    text-underline-offset: 0.16em;
-    text-decoration-skip-ink: auto;
-  }
-  .t-body a:hover,
-  .t-lede a:hover { text-decoration-color: var(--mark-accent); }
-
-  /* OUTLINE. The domain tag becomes a hairline box, no fill — how \fbox
-     reads. */
-  .domain-chip {
-    display: inline-block;
-    padding: 0.12em 0.5em;
-    border: 1px solid --alpha(var(--mark-plowhorses) / 60%);
-    border-radius: 2px;
-    color: var(--mark-plowhorses);
-  }
-
-  /* Same hue, no box, so the two read as one family at two volumes. */
-  .stack > li { color: var(--mark-plowhorses); }
+/* Same hue, no box, so the two read as one family at two volumes. */
+.stack > li {
+  color: var(--mark-outline);
 }
 
 /* ===================================================================
    ORNAMENT
 
-   The hibiscus sits behind the tail of the name, over the final r. Light
-   theme only: its gold, rose and crimson belong to paper, and against the
-   slate ground they would read as a stain. Night mode stays as it was.
+   The hibiscus sits behind the tail of the name, over the final r. It shows
+   in both themes now that they share one design language.
 
    left:100% anchors it to the right edge of the name's shrink-wrapped
    wrapper — i.e. exactly where the text stops — and the negative translate
@@ -360,11 +374,17 @@
    is clipped by the sidebar's overflow.
 
    p5.brush paints into a canvas this element hosts. The canvas is created at
-   120 units with pixelDensity 1 — its brush weights are tuned to that — so it
-   is scaled to the box with CSS rather than by making the canvas bigger.
+   120 units with pixelDensity 1 — its brush weights are tuned to that ratio —
+   so it is scaled to the box with CSS rather than by enlarging the canvas,
+   which would change every stroke's weight relative to the geometry.
+
+   The canvas carries real alpha, keyed from the paper it was painted on. That
+   transparency is what lets the cursor wash pass through; an opaque tile
+   showed a hard square edge, because the wash sits at z-index 0 and the
+   sidebar at 10, so the tile could never receive it.
    =================================================================== */
 .motif-name {
-  display: none;
+  display: block;
   position: absolute;
   z-index: 0;
   left: 100%;
@@ -372,12 +392,15 @@
   transform: translate(-46%, -56%);
   width: 7rem;
   height: 7rem;
-  opacity: 0.55;
+  /* Night sits it back: the same rose and gold read brighter against slate
+     than against ivory. */
+  opacity: 0.4;
   /* Nothing the visitor does should touch it: no pointer target, no inherited
      transition to animate, and no place for a focus ring to land. */
   pointer-events: none;
   transition: none;
   user-select: none;
+  outline: none;
 }
 .motif-name canvas {
   display: block;
@@ -387,7 +410,7 @@
   outline: none;
 }
 :root:not([data-theme="dark"]) .motif-name {
-  display: block;
+  opacity: 0.55;
 }
 
 /* ===================================================================
