@@ -130,9 +130,18 @@
   --paper: #faf8f2;
 
   --mark-underline: #96760a;
-  --mark-outline: #4d7a18;
+  /* Leaf green, not night's olive. Olive sits next to this ivory's own yellow,
+     so on paper it read as khaki and sank into the page, even though its
+     contrast matched night's green. Turned toward true green (hue 140, where
+     sRGB holds the most chroma at this depth) and taken darker, it separates
+     from the ground by hue as well as by value, and still stays clear of the
+     petrol accent. APCA Lc 78.5 (was 70.8), WCAG 6.32 (was 4.81). */
+  --mark-outline: #216a0a;
   --mark-underline-soft: #96760ab3;   /* 70% */
-  --mark-outline-soft: #4d7a1899;     /* 60% */
+  /* 75% rather than night's 60%. A dark hairline on a light ground gives up
+     more contrast when it is thinned: at 60% this box measured 2.37:1 against
+     night's 3.45. At 75% it is 3.69. */
+  --mark-outline-soft: #216a0abf;
 
   --color-slate-900: var(--paper);      /* page */
   --color-slate-800: #e4ddcb;           /* card wash, used at 45% alpha */
