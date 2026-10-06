@@ -1,10 +1,14 @@
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import App from './App.jsx'
+import { hydrateRoot } from 'react-dom/client'
+import Page from './Page.jsx'
 import './index.css'
 
-createRoot(document.getElementById('root')).render(
+// Every page arrives rendered; this attaches React to what is already there.
+const data = JSON.parse(document.getElementById('page-data').textContent)
+
+hydrateRoot(
+  document.getElementById('root'),
   <StrictMode>
-    <App />
+    <Page data={data} />
   </StrictMode>,
 )

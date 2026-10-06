@@ -1,4 +1,7 @@
 @import "tailwindcss";
+/* The painted post ornaments — generated with their images by
+   scripts/render-art.mjs. */
+@import "./assets/ornaments/ornaments.css";
 
 /* ===================================================================
    COMPUTER MODERN — light theme only
@@ -122,6 +125,9 @@
      a full-strength colour. An 8-digit hex cannot be optimised away. */
   --mark-underline-soft: #cfae62b3;   /* 70% */
   --mark-outline-soft: #94b56699;     /* 60% */
+  /* A diff's removed line, and the caution callout: the hibiscus's rose,
+     lifted for the dark ground. */
+  --mark-remove: #de8b8f;
 }
 
 :root:not([data-theme="dark"]) {
@@ -142,6 +148,7 @@
      more contrast when it is thinned: at 60% this box measured 2.37:1 against
      night's 3.45. At 75% it is 3.69. */
   --mark-outline-soft: #216a0abf;
+  --mark-remove: #a8323b;
 
   --color-slate-900: var(--paper);      /* page */
   --color-slate-800: #e4ddcb;           /* card wash, used at 45% alpha */
@@ -234,6 +241,26 @@
     line-height: 1.3;
   }
 
+  /* A post's title. The display face at nearly the name's size, but a title
+     can run to three lines, so it steps down sooner on narrow screens. */
+  .t-title {
+    font-family: var(--font-paper);
+    font-size: clamp(2rem, 5vw, 2.875rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.008em;
+  }
+
+  /* The name as the blog's masthead: the sidebar's display line cut down to
+     a wordmark. */
+  .t-wordmark {
+    font-family: var(--font-paper);
+    font-size: 1.375rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.004em;
+  }
+
   .t-subheading {
     font-family: var(--font-paper);
     font-size: 1.0625rem;
@@ -305,6 +332,44 @@
   }
   .nav-item.is-active { font-weight: 600; }
 
+  /* The masthead's nav runs in a row, where the sidebar's widening letter
+     spacing would shove its neighbours along. The current page takes the
+     gold rule instead. */
+  .mast-link {
+    transition: color 0.28s ease;
+    text-decoration-line: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.6em;
+  }
+  .mast-link.is-active {
+    font-weight: 600;
+    text-decoration-color: var(--mark-underline-soft);
+  }
+
+  /* A post's contents, on the card wash. The marker is the summary's own
+     label, so the browser's triangle goes. */
+  .toc {
+    margin-inline: -1rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background-color: --alpha(var(--color-slate-800) / 35%);
+  }
+  .toc summary {
+    cursor: pointer;
+    list-style: none;
+    width: fit-content;
+    transition: color 0.28s ease;
+  }
+  .toc summary::-webkit-details-marker { display: none; }
+  .toc summary:hover { color: var(--color-teal-300); }
+  .toc summary::after {
+    content: " +";
+  }
+  .toc[open] summary::after {
+    content: " −";
+  }
+
   /* ===== CARDS ===== */
   .card {
     border-radius: 0.75rem;
@@ -319,6 +384,540 @@
 
   .arrow { transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1); }
   .group\/link:hover .arrow { transform: translate(2px, -2px); }
+
+  /* ===== PROSE =====
+     A post's body, rendered from Markdown. Read at length, so it is set a
+     step up from .t-body, at 1rem. The rest is the page's own vocabulary:
+     Computer Modern for headings, the gold rule under links, a quote set the
+     way the tagline is, and code blocks on the card wash. */
+  .prose {
+    max-width: 36em;
+    font-size: 1rem;
+    line-height: 1.75;
+    letter-spacing: -0.002em;
+    color: var(--color-slate-400);
+    overflow-wrap: break-word;
+  }
+  .prose > * + * { margin-top: 1.25em; }
+
+  .prose h2,
+  .prose h3 {
+    font-family: var(--font-paper);
+    font-weight: 700;
+    scroll-margin-top: 2rem;
+  }
+  .prose h2 {
+    margin-top: 2.4em;
+    font-size: 1.375rem;
+    line-height: 1.3;
+    color: var(--color-slate-100);
+  }
+  .prose h3 {
+    margin-top: 2em;
+    font-size: 1.125rem;
+    line-height: 1.35;
+    color: var(--color-slate-200);
+  }
+  .prose :is(h2, h3) + * { margin-top: 0.75em; }
+
+  /* The # beside each heading, there to copy a link from. Out of the way
+     until the heading is hovered or the link itself is focused. */
+  .prose .header-anchor {
+    margin-left: 0.4em;
+    color: var(--color-slate-600);
+    text-decoration: none;
+    opacity: 0;
+    transition: opacity 0.2s ease, color 0.2s ease;
+  }
+  .prose :is(h2, h3):hover .header-anchor,
+  .prose .header-anchor:focus-visible { opacity: 1; }
+  .prose .header-anchor:hover { color: var(--color-teal-300); }
+
+  .prose strong { font-weight: 600; color: var(--color-slate-200); }
+
+  .prose ul { list-style: disc; padding-left: 1.3em; }
+  .prose ol { list-style: decimal; padding-left: 1.4em; }
+  .prose li + li { margin-top: 0.4em; }
+  .prose li > :is(ul, ol) { margin-top: 0.4em; }
+  .prose li::marker { color: var(--color-slate-600); }
+
+  .prose blockquote {
+    padding-left: 1.1em;
+    border-left: 1px solid var(--mark-outline-soft);
+    font-family: var(--font-paper);
+    font-size: 1.125rem;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--color-teal-300);
+  }
+
+  .prose code {
+    padding: 0.15em 0.35em;
+    border-radius: 4px;
+    background-color: --alpha(var(--color-slate-800) / 70%);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--color-slate-200);
+  }
+  /* ----- Code -----
+     Every fenced block arrives in a figure.code: an optional filename
+     caption, a copy button and the <pre>. The figure carries the wash and the
+     radius, pulled out to the cards' -1rem so the code's text lines up with
+     the prose and only the wash reaches into the gutter. (A bare indented
+     block is a plain <pre>, and gets the same treatment on its own.) */
+  .prose .code,
+  .prose > pre {
+    position: relative;
+    margin-inline: -1rem;
+    border-radius: 0.75rem;
+    background-color: --alpha(var(--color-slate-800) / 45%);
+  }
+  .prose pre {
+    padding-block: 1rem;
+    font-size: 0.8125rem;
+    line-height: 1.7;
+    overflow-x: auto;
+  }
+  .prose > pre { padding-inline: 1rem; }
+  .prose pre code {
+    padding: 0;
+    background: none;
+    font-size: inherit;
+    color: inherit;
+  }
+  /* Each line spans the block, so a highlight or diff wash runs edge to
+     edge, and carries the block's side padding itself. The code is as wide
+     as its longest line, so scrolling sideways reveals whole lines. */
+  .prose .code code {
+    display: block;
+    width: max-content;
+    min-width: 100%;
+  }
+  .prose .code .line {
+    display: inline-block;
+    width: 100%;
+    padding-inline: 1rem;
+  }
+  .prose .code .line.highlighted {
+    background-color: --alpha(var(--color-teal-300) / 10%);
+  }
+  .prose .code .line.diff.add {
+    background-color: --alpha(var(--mark-outline) / 12%);
+  }
+  .prose .code .line.diff.remove {
+    background-color: --alpha(var(--mark-remove) / 12%);
+  }
+  .prose .code .line.diff.remove > span { opacity: 0.7; }
+  /* The +/− sits in the side padding, out of the code's own column. */
+  .prose .code .line.diff::before {
+    display: inline-block;
+    width: 1rem;
+    margin-left: -1rem;
+    text-align: center;
+  }
+  .prose .code .line.diff.add::before {
+    content: "+";
+    color: var(--mark-outline);
+  }
+  .prose .code .line.diff.remove::before {
+    content: "−";
+    color: var(--mark-remove);
+  }
+
+  .prose .code-title {
+    padding: 0.6rem 1rem;
+    /* Longhands: the minifier strips colour functions from the shorthand. */
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: --alpha(var(--color-slate-600) / 25%);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    color: var(--color-slate-500);
+  }
+
+  /* Out of the way until the block is pointed at or tabbed into; always
+     there on touch, where nothing hovers. Radius is the figure's less its
+     inset, so the corners run concentric. */
+  .code-copy {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 1;
+    padding: 0.3rem 0.55rem;
+    border-radius: 0.25rem;
+    background-color: --alpha(var(--color-slate-800) / 85%);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-slate-400);
+    opacity: 0;
+    transition-property: opacity, color, scale;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+  /* With a caption, the button sits in the caption's row. */
+  .code-title ~ .code-copy { top: 0.3rem; }
+  .code:hover .code-copy,
+  .code-copy:focus-visible { opacity: 1; }
+  .code-copy:hover { color: var(--color-teal-300); }
+  .code-copy:active { scale: 0.96; }
+  @media (hover: none) {
+    .code-copy { opacity: 1; }
+  }
+
+  /* ----- Callouts -----
+     On the card wash, named by a mono label in the colour of its kind. */
+  .prose .callout {
+    --callout: var(--color-teal-300);
+    margin-inline: -1rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background-color: --alpha(var(--color-slate-800) / 35%);
+    font-size: 0.9375rem;
+  }
+  .prose .callout-tip { --callout: var(--mark-outline); }
+  .prose .callout-important { --callout: var(--mark-underline); }
+  .prose .callout-warning { --callout: var(--mark-underline); }
+  .prose .callout-caution { --callout: var(--mark-remove); }
+  .prose .callout > * + * { margin-top: 0.6em; }
+  .prose .callout-label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--callout);
+  }
+
+  /* ----- Figures ----- */
+  .prose figure:not(.code) { margin-block: 2.25em; }
+  .prose figure:not(.code) img {
+    display: block;
+    margin-inline: auto;
+  }
+  .prose figure:not(.code) figcaption {
+    margin-top: 0.85rem;
+    text-align: center;
+    font-family: var(--font-paper);
+    font-size: 0.9375rem;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--color-slate-500);
+  }
+
+  /* ----- Maths -----
+     Typeset by KaTeX, in its own Computer Modern-derived faces, so equations
+     share the titles' lineage. A wide one scrolls rather than widening the
+     page. */
+  .prose .katex { font-size: 1.1em; }
+  .prose .katex-block {
+    overflow-x: auto;
+    text-align: center;
+  }
+
+  /* ----- Footnotes -----
+     References are small mono numerals in the accent. The notes close the
+     post under a label, a step down from the body. */
+  .prose .footnote-ref {
+    font-family: var(--font-mono);
+    font-size: 0.65em;
+    line-height: 0;
+  }
+  .prose .footnotes {
+    margin-top: 3.5em;
+    padding-top: 1.5em;
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: --alpha(var(--color-slate-600) / 25%);
+    font-size: 0.875rem;
+    line-height: 1.7;
+  }
+  .prose .footnotes-title {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-slate-500);
+  }
+  .prose .footnotes-list { margin-top: 1em; }
+  .prose .footnotes-list li::marker {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--color-teal-300);
+  }
+  /* Arriving at a note, or back at its reference, the target takes a brief
+     wash so the eye lands on it. */
+  .prose .footnote-item:target,
+  .prose .footnote-ref:target {
+    border-radius: 0.25rem;
+    background-color: --alpha(var(--color-teal-300) / 12%);
+  }
+  .prose .footnote-item,
+  .prose [id^="fnref"] {
+    scroll-margin-top: 2rem;
+  }
+
+  /* A hairline in pure black or white, never a tinted neutral: a tint picks
+     up the ground under it and reads as dirt on the image's edge. Drawn
+     inside the edge, so it frames the picture without growing it. */
+  .prose img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    outline: 1px solid oklch(1 0 0 / 0.1);
+    outline-offset: -1px;
+  }
+  :root:not([data-theme="dark"]) .prose img {
+    outline-color: oklch(0 0 0 / 0.1);
+  }
+
+  /* ----- The blog's index -----
+     A contents page, not a feed. Hairlines carry the structure; nothing is
+     boxed. Longhand borders throughout: the minifier strips colour
+     functions from the shorthand. */
+
+  /* The masthead's line of description: the years' italic, at reading
+     size, in the quiet grey. */
+  .masthead-note {
+    max-width: 30em;
+    font-family: var(--font-paper);
+    font-size: 1.125rem;
+    font-style: italic;
+    line-height: 1.55;
+    color: var(--color-slate-500);
+  }
+
+  /* The dateline band. The lead's top rule closes it, so it carries only
+     the rule above. */
+  .dateline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    padding-block: 0.85rem;
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: --alpha(var(--color-slate-600) / 25%);
+  }
+  .frieze {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+  .frieze a {
+    display: block;
+    border-radius: 9999px;
+  }
+  .frieze .ornament {
+    display: block;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .frieze a:hover .ornament,
+  .frieze a:focus-visible .ornament {
+    rotate: -8deg;
+    scale: 1.12;
+  }
+  /* On a phone the frieze takes a row of its own under the count and the
+     link, rather than squeezing between them. */
+  @media (width < 40rem) {
+    .frieze {
+      order: 1;
+      width: 100%;
+    }
+  }
+
+  /* The newest post, set as the lead between two rules. */
+  .lead {
+    padding-block: 2.5rem;
+    border-block-width: 1px;
+    border-block-style: solid;
+    border-block-color: --alpha(var(--color-slate-600) / 25%);
+  }
+  .lead-read {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+  .lead-read-arrow {
+    display: inline-block;
+    transition: translate 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .lead-read:hover .lead-read-arrow { translate: 3px 0; }
+
+  /* A year opens its run of entries: the numeral in the display face's
+     italic, then a hairline to the column's edge. */
+  .year-rule {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: var(--font-paper);
+    font-size: 1.375rem;
+    font-style: italic;
+    line-height: 1.2;
+    color: var(--color-slate-500);
+  }
+  .year-rule::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background-color: --alpha(var(--color-slate-600) / 25%);
+  }
+
+  /* An entry: number, then title, a dotted leader and the date on one line,
+     with a single line of summary beneath. Baseline-aligned, so the mono
+     number and date sit level with the serif title. */
+  .entry {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    column-gap: 0.75rem;
+    align-items: baseline;
+    padding-block: 0.85rem;
+  }
+  .entry-number {
+    color: var(--color-slate-600);
+    transition: color 0.3s ease;
+  }
+  /* A painted ornament sits beside the title's first line, centred on it
+     rather than on a baseline it does not have. */
+  .entry-number.ornament {
+    align-self: start;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-top: -0.45rem;
+  }
+  @media (width < 40rem) {
+    .entry-number.ornament { margin-top: 0.1rem; }
+  }
+  .entry-line {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    min-width: 0;
+  }
+  .entry-title {
+    min-width: 0;
+    font-family: var(--font-paper);
+    font-size: 1.1875rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--color-slate-100);
+    transition: color 0.3s ease;
+  }
+  .entry-leader {
+    flex: 1 1 1.5rem;
+    min-width: 1.5rem;
+    border-bottom-width: 1px;
+    border-bottom-style: dotted;
+    border-bottom-color: var(--color-slate-600);
+    transition: border-color 0.3s ease;
+  }
+  .entry-date {
+    white-space: nowrap;
+    color: var(--color-slate-500);
+  }
+  .entry-summary {
+    grid-column: 2;
+    margin-top: 0.3rem;
+    max-width: 34em;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-slate-500);
+  }
+  /* A phone has no width for a leader to run along, and squeezing one in
+     beside the date wraps titles to four lines. There the date steps up
+     above the title, the leader goes, and the summary gets a second line. */
+  @media (width < 40rem) {
+    .entry-line {
+      flex-direction: column-reverse;
+      align-items: flex-start;
+      gap: 0.2rem;
+    }
+    .entry-leader { display: none; }
+    .entry-summary {
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+    }
+  }
+
+  /* On hover the title takes the accent and the leader firms up into the
+     links' gold rule, as if the line were being drawn to the page. */
+  .entry:hover .entry-title,
+  .entry:focus-visible .entry-title,
+  .entry:hover .entry-number { color: var(--color-teal-300); }
+  /* The ornament turns a few degrees, as a token does when picked up. */
+  .entry:hover .ornament,
+  .entry:focus-visible .ornament {
+    rotate: -8deg;
+    scale: 1.06;
+  }
+  .entry:hover .entry-leader,
+  .entry:focus-visible .entry-leader {
+    border-bottom-style: solid;
+    border-bottom-color: var(--mark-underline-soft);
+  }
+
+  /* A post's opening, centred like a title page. */
+  .post-head { text-align: center; }
+  .post-rule {
+    width: 3rem;
+    height: 1px;
+    margin-inline: auto;
+    background-color: var(--mark-underline-soft);
+  }
+
+  .prose table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+  .prose th {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-align: left;
+    color: var(--color-slate-500);
+  }
+  .prose :is(th, td) {
+    padding: 0.55em 1.5em 0.55em 0;
+    border-bottom: 1px solid var(--color-slate-800);
+  }
+
+  /* A section break, set as the asterism a printed page would use; the
+     sign-off at the foot of every blog page opens with the same mark.
+     height and overflow undo the reset's zero height and the browser's own
+     overflow:hidden on <hr>, which between them clip the mark away. */
+  .prose hr {
+    height: auto;
+    overflow: visible;
+    margin-block: 2.75em;
+    border: 0;
+  }
+  .prose hr,
+  .asterism {
+    text-align: center;
+  }
+  .prose hr::before,
+  .asterism::before {
+    content: "*  *  *";
+    white-space: pre;
+    font-family: var(--font-paper);
+    color: var(--color-slate-600);
+  }
 }
 
 /* ===================================================================
@@ -334,7 +933,8 @@
 /* UNDERLINE. Prose links carry a coloured rule taken from the font's own
    metrics, so it clears descenders instead of cutting through them. */
 .t-body a,
-.t-lede a {
+.t-lede a,
+.prose a:not(.header-anchor) {
   text-decoration-line: underline;
   /* color-mix, not Tailwind's --alpha(): these rules live outside the layers
      where that function is processed, and it silently compiled away to a
@@ -345,9 +945,24 @@
   text-decoration-skip-ink: auto;
 }
 .t-body a:hover,
-.t-lede a:hover {
+.t-lede a:hover,
+.prose a:not(.header-anchor):hover {
   text-decoration-color: var(--color-teal-300);
 }
+.prose a:not(.header-anchor) { color: var(--color-slate-200); }
+/* Footnote references and their return links are marks, not prose links. */
+.prose .footnote-ref a,
+.prose a.footnote-backref {
+  padding-inline: 0.1em;
+  text-decoration-line: none;
+  color: var(--color-teal-300);
+}
+
+/* CODE. Highlighted at build time with both palettes on every token, as
+   --shiki-dark and --shiki-light; this picks the one for the current theme,
+   so a toggle recolours code with nothing re-rendered. */
+.prose .shiki span { color: var(--shiki-dark); }
+:root:not([data-theme="dark"]) .prose .shiki span { color: var(--shiki-light); }
 
 /* OUTLINE. The domain tag becomes a hairline box, no fill — how \fbox
    reads on a page. */
@@ -411,7 +1026,7 @@
   user-select: none;
   outline: none;
 
-  /* Pre-rendered by `npm run render:flowers`, one image per theme. Referenced
+  /* Pre-rendered by `npm run render:art`, one image per theme. Referenced
      from CSS rather than an <img> so the browser fetches only the one the
      active theme actually uses, and so the flower needs no JavaScript at all —
      it is painted by the stylesheet, on first paint, with nothing to execute.
@@ -422,6 +1037,46 @@
   background-repeat: no-repeat;
   background-position: center;
 }
+/* A post's painted ornament (src/assets/ornaments). The image for each
+   number and theme comes from ornaments.css; this is the box it paints. */
+.ornament {
+  display: inline-block;
+  flex-shrink: 0;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition:
+    rotate 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    scale 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ornament-lead {
+  width: 3.25rem;
+  height: 3.25rem;
+}
+.ornament-post {
+  width: 4.5rem;
+  height: 4.5rem;
+}
+
+/* The same flower at two smaller sizes: behind the masthead's wordmark, and
+   on its own as the sign-off's mark. */
+.motif-small {
+  width: 3.25rem;
+  height: 3.25rem;
+}
+.motif-mark {
+  width: 3rem;
+  height: 3rem;
+  opacity: 0.7;
+  background-image: url("./assets/hibiscus-dark.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+:root:not([data-theme="dark"]) .motif-mark {
+  background-image: url("./assets/hibiscus-light.png");
+}
+
 :root:not([data-theme="dark"]) .motif-name {
   opacity: 0.55;
   background-image: url("./assets/hibiscus-light.png");
@@ -443,9 +1098,43 @@
   transition:
     background-color 0.25s ease,
     color 0.25s ease,
-    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    scale 150ms ease-out;
 }
 .theme-toggle:hover { transform: translateY(-1px); }
+
+/* A press gives way slightly. Scale is its own property, so it composes
+   with the hover lift on transform instead of replacing it. */
+.theme-toggle,
+.to-top {
+  scale: 1;
+}
+.theme-toggle:active,
+.to-top.is-shown:active {
+  scale: 0.96;
+}
+
+/* Pages are rendered before anyone's theme is known, so the toggle carries
+   both icons, stacked in one cell, and the theme on <html> picks one. They
+   cross-fade rather than swap: the outgoing icon shrinks and blurs away as
+   the incoming one grows into place. */
+.theme-toggle > svg {
+  grid-area: 1 / 1;
+  transition-property: opacity, scale, filter;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+.theme-toggle .icon-sun,
+:root[data-theme="dark"] .theme-toggle .icon-moon {
+  opacity: 0;
+  scale: 0.25;
+  filter: blur(4px);
+}
+:root[data-theme="dark"] .theme-toggle .icon-sun {
+  opacity: 1;
+  scale: 1;
+  filter: blur(0);
+}
 
 .spotlight {
   position: fixed;
@@ -466,6 +1155,19 @@
   );
 }
 
+/* Reading progress on a post. Scaled, not sized, so the fill never triggers
+   layout. */
+.progress {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 50;
+  height: 2px;
+  background: var(--color-teal-300);
+  transform: scaleX(var(--progress, 0));
+  transform-origin: left;
+  pointer-events: none;
+}
+
 .to-top {
   position: fixed;
   right: 1.5rem;
@@ -482,6 +1184,7 @@
   transition:
     opacity 0.35s ease,
     transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    scale 150ms ease-out,
     background-color 0.25s ease,
     color 0.25s ease;
 }
@@ -537,7 +1240,98 @@
   }
 }
 
+/* ===================================================================
+   PAGE TRANSITIONS
+
+   Every page is its own HTML file, so moving between them is a full
+   navigation; the browser cross-fades the two documents instead of
+   flashing white. A post's title carries the same view-transition-name
+   on the list and in its header, so it travels from one to the other. The
+   theme toggle is named too, which pins it in place rather than fading it
+   out and back.
+   =================================================================== */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-group(*) {
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* A title changes size and alignment on the way. Scaling the snapshots
+   to fit, rather than stretching them, keeps the letters in proportion. */
+::view-transition-old(*.post-title),
+::view-transition-new(*.post-title) {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.theme-toggle { view-transition-name: theme-toggle; }
+.vt-arrived .reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+/* ===================================================================
+   PRINT
+
+   A post prints as the article alone, in the day palette on white,
+   whatever the screen's theme: the chrome, the margins and the controls
+   go, and a link writes out where it points.
+   =================================================================== */
+@media print {
+  :root[data-theme] {
+    --color-slate-900: #fff;
+    --color-slate-800: #e4ddcb;
+    --color-slate-600: #85837a;
+    --color-slate-500: #5f6166;
+    --color-slate-400: #33383a;
+    --color-slate-300: #1c2225;
+    --color-slate-200: #11171a;
+    --color-slate-100: #080c0e;
+    --color-teal-300: #0f6b60;
+    --color-teal-900: #fff;
+    --mark-underline: #96760a;
+    --mark-underline-soft: #96760ab3;
+    --mark-outline: #216a0a;
+    --mark-outline-soft: #216a0abf;
+    --mark-remove: #a8323b;
+  }
+  .spotlight,
+  .theme-toggle,
+  .to-top,
+  .progress,
+  .code-copy,
+  .header-anchor,
+  .motif-name,
+  nav,
+  aside[aria-label="About the author"],
+  .toc,
+  .post-rule,
+  main ~ footer {
+    display: none !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .prose .shiki span { color: var(--shiki-light) !important; }
+  .prose { max-width: none; font-size: 11pt; }
+  .prose pre { white-space: pre-wrap; }
+  .prose a:not(.header-anchor, .footnote-backref)[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: var(--color-slate-500);
+    overflow-wrap: anywhere;
+  }
+  .prose :is(h2, h3) { break-after: avoid; }
+  .prose :is(.code, pre, figure, .callout, table, blockquote) { break-inside: avoid; }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
   html { scroll-behavior: auto; }
   .reveal {
     opacity: 1;

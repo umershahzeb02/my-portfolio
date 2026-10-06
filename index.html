@@ -10,11 +10,9 @@
     <link rel="icon" type="image/x-icon" href="/my-portfolio/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/my-portfolio/apple-touch-icon.png" />
 
-    <title>Shahzeb Umer — Software Engineer</title>
-    <meta
-      name="description"
-      content="Software engineer. Browser internals, multimodal AI, and production platforms at scale. Simplicity is prerequisite for reliability."
-    />
+    <!-- Title, description, canonical and Open Graph tags are per page, filled
+         in by src/entry-server.jsx. -->
+    <!--app-head-->
     <meta name="author" content="Shahzeb Umer" />
     <!-- Browser and phone status-bar tint: the page's own ground, so the bar
          runs into the page with no seam. Keep in step with --paper and
@@ -22,13 +20,6 @@
          the theme moved. -->
     <meta name="theme-color" content="#faf8f2" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#1e1f21" media="(prefers-color-scheme: dark)" />
-        <meta property="og:type" content="website" />
-    <meta property="og:title" content="Shahzeb Umer — Software Engineer" />
-    <meta
-      property="og:description"
-      content="Browser internals, multimodal AI, and production platforms at scale."
-    />
-    <meta property="og:url" content="https://umershahzeb02.github.io/my-portfolio/" />
     <meta name="twitter:card" content="summary_large_image" />
 
     <!-- Night mode's faces. Computer Modern is bundled from node_modules and
@@ -53,6 +44,14 @@
          Only the SVG icon is swapped. The .ico fallback below it stays put —
          it exists for browsers that cannot render an SVG favicon at all, and
          those are not the browsers that will follow a theme change. */
+      /* A page reached through a view transition is snapshotted as soon as
+         it can render, and anything still waiting to fade in would be caught
+         invisible: the post title would morph into nothing. The transition is
+         the entrance on those navigations, so the fade-ins stand down. */
+      window.addEventListener("pagereveal", function (e) {
+        if (e.viewTransition) document.documentElement.classList.add("vt-arrived");
+      });
+
       window.__setFavicon = function (dark) {
         try {
           var href = dark
@@ -86,9 +85,14 @@
         }
       })();
     </script>
+    <!-- Every page now arrives with its content already in the HTML. Without
+         this, a visitor with JavaScript off would get it all at opacity 0,
+         waiting on a reveal that never runs. -->
+    <noscript><style>.reveal { opacity: 1; transform: none; } .code-copy { display: none; }</style></noscript>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><!--app-html--></div>
+    <!--app-data-->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
