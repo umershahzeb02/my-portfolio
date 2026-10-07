@@ -1,3 +1,8 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Disallow:
+
+# Crawlers read robots.txt only at the domain root, so on a GitHub Pages
+# project site this file is not where they look; the sitemap is still worth
+# naming, and it takes effect as-is once the site has a domain of its own.
+Sitemap: https://umershahzeb02.github.io/my-portfolio/sitemap.xml
