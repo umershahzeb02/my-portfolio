@@ -7,7 +7,7 @@ export const profile = {
   tagline: "Simplicity is prerequisite for reliability.",
   email: "umershahzeb@gmail.com",
   about: [
-    "I’m a software engineer currently at the Directorate of ICT at Allama Iqbal Open University, where I ship public and internal platforms for an institution serving 400,000+ students.",
+    "I’m a software engineer at Z360, where I work remotely on Summit EHR, an AI-native health record platform. Before that I shipped public and internal platforms at the Directorate of ICT at Allama Iqbal Open University, for an institution serving 400,000+ students.",
     "I pick the stack to fit the problem rather than the other way round. So far that has meant browser internals, multimodal AI systems, production platforms at scale, infrastructure, and a fair amount of algorithmic work. The common thread is depth: going as far down as a problem actually requires instead of stopping at the framework.",
     "I write about browser internals, automation and web architecture, and I’m always looking for the next unfamiliar problem.",
   ],
@@ -66,29 +66,41 @@ export const work = [
   },
 ];
 
-export const experience = {
-  role: "Full Stack Developer",
-  orgShort: "Directorate of ICT, AIOU",
-  period: "Dec 2024 – Present",
-  note: "A distance-learning institution serving 400,000+ students nationwide.",
-  projects: [
-    {
-      name: "Islamic Research Index",
-      href: "https://iri.aiou.edu.pk",
-      text: "A Next.js 14 research-indexing platform hosting thousands of academic papers. Query optimisation and caching for page-load performance, and automated content-management workflows that cut manual indexing effort.",
-    },
-    {
-      name: "AIOU Bookstore",
-      href: "https://bookstore.aiou.edu.pk",
-      text: "An e-commerce platform with secure payment processing and a modular architecture spanning online sales, POS, warehouse and notifications, with inventory synchronised between the online store and physical outlets.",
-    },
-    {
-      name: "HR Management System",
-      href: null,
-      text: "Node.js/Express and Next.js over PostgreSQL, covering attendance, payroll, evaluations and employee lifecycle, with role-based access control and document storage in cloud object storage.",
-    },
-  ],
-};
+/* Newest first. `orgHref` links the employer; a project's `text` is optional. */
+export const experience = [
+  {
+    role: "Software Engineer",
+    orgShort: "Z360",
+    orgHref: "https://z360.biz",
+    period: "Aug 2026 – Present",
+    location: "Remote",
+    note: "Working on Summit EHR, Z360’s AI-native health record platform.",
+    projects: [{ name: "Summit EHR", href: "https://summit-ehr.com", text: "" }],
+  },
+  {
+    role: "Full Stack Developer",
+    orgShort: "Directorate of ICT, AIOU",
+    period: "Dec 2024 – 2026",
+    note: "A distance-learning institution serving 400,000+ students nationwide.",
+    projects: [
+      {
+        name: "Islamic Research Index",
+        href: "https://iri.aiou.edu.pk",
+        text: "A Next.js 14 research-indexing platform hosting thousands of academic papers. Query optimisation and caching for page-load performance, and automated content-management workflows that cut manual indexing effort.",
+      },
+      {
+        name: "AIOU Bookstore",
+        href: "https://bookstore.aiou.edu.pk",
+        text: "An e-commerce platform with secure payment processing and a modular architecture spanning online sales, POS, warehouse and notifications, with inventory synchronised between the online store and physical outlets.",
+      },
+      {
+        name: "HR Management System",
+        href: null,
+        text: "Node.js/Express and Next.js over PostgreSQL, covering attendance, payroll, evaluations and employee lifecycle, with role-based access control and document storage in cloud object storage.",
+      },
+    ],
+  },
+];
 
 /* Hard-coded rather than fetched. The previous build pulled these through a
    third-party RSS-to-JSON proxy at render time, so a rate limit or an outage on

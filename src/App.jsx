@@ -109,42 +109,57 @@ function Experience() {
     <section id="experience" className="scroll-mt-24 pb-24" aria-label="Experience">
       <SectionLabel index="02">Experience</SectionLabel>
 
-      <Reveal className="card -mx-4 p-4">
-        <p className="t-meta text-slate-500">{experience.period}</p>
-        {/* Role and employer share a line. items-baseline rather than items-center
-            because the two sit at different sizes, and baselines are what the eye
-            reads as level; centring would leave the smaller one floating. */}
-        <div className="mt-2 flex flex-wrap items-baseline gap-x-2">
-          <h3 className="t-heading text-slate-100">{experience.role}</h3>
-          {/* Muted so it separates without competing, and aria-hidden so screen
-              readers do not announce "middle dot" between the two phrases. */}
-          <span className="t-body text-slate-600" aria-hidden="true">·</span>
-          <p className="t-body text-slate-300">{experience.orgShort}</p>
-        </div>
-        <p className="t-body mt-1 text-sm text-slate-500">{experience.note}</p>
-
-        {/* Indented so the platforms sit beneath the role rather than beside it.
-            Padding does the nesting on its own here, with no rule to lean on. */}
-        <ul className="mt-6 space-y-5 pl-5 sm:pl-7">
-          {experience.projects.map((p) => (
-            <li key={p.name}>
-              <h4 className="t-subheading text-slate-200">
-                {p.href ? (
-                  <Out href={p.href}>
-                    {p.name} <Arrow />
+      <ol className="space-y-4">
+        {experience.map((job, i) => (
+          <Reveal as="li" key={job.orgShort} className="card -mx-4 p-4" delay={i * 60}>
+            <p className="t-meta text-slate-500">
+              {job.period}
+              {job.location && ` · ${job.location}`}
+            </p>
+            {/* Role and employer share a line. items-baseline rather than items-center
+                because the two sit at different sizes, and baselines are what the eye
+                reads as level; centring would leave the smaller one floating. */}
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2">
+              <h3 className="t-heading text-slate-100">{job.role}</h3>
+              {/* Muted so it separates without competing, and aria-hidden so screen
+                  readers do not announce "middle dot" between the two phrases. */}
+              <span className="t-body text-slate-600" aria-hidden="true">·</span>
+              <p className="t-body text-slate-300">
+                {job.orgHref ? (
+                  <Out href={job.orgHref} className="!text-slate-300 hover:!text-teal-300">
+                    {job.orgShort} <Arrow />
                   </Out>
                 ) : (
-                  <>
-                    {p.name}{" "}
-                    <span className="t-meta align-middle text-slate-500">internal</span>
-                  </>
+                  job.orgShort
                 )}
-              </h4>
-              <p className="t-body mt-1.5 text-slate-400">{p.text}</p>
-            </li>
-          ))}
-        </ul>
-      </Reveal>
+              </p>
+            </div>
+            <p className="t-body mt-1 text-sm text-slate-500">{job.note}</p>
+
+            {/* Indented so the platforms sit beneath the role rather than beside it.
+                Padding does the nesting on its own here, with no rule to lean on. */}
+            <ul className="mt-6 space-y-5 pl-5 sm:pl-7">
+              {job.projects.map((p) => (
+                <li key={p.name}>
+                  <h4 className="t-subheading text-slate-200">
+                    {p.href ? (
+                      <Out href={p.href}>
+                        {p.name} <Arrow />
+                      </Out>
+                    ) : (
+                      <>
+                        {p.name}{" "}
+                        <span className="t-meta align-middle text-slate-500">internal</span>
+                      </>
+                    )}
+                  </h4>
+                  {p.text && <p className="t-body mt-1.5 text-slate-400">{p.text}</p>}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        ))}
+      </ol>
 
       <Reveal className="mt-12" delay={60}>
         <p className="t-label mb-5 text-slate-500">Education</p>
