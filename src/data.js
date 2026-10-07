@@ -1,5 +1,12 @@
 /* All copy lives here so the page can be updated without touching layout code. */
 
+/* Project logos. Imported rather than linked, so Vite fingerprints them and
+   adds the base path; a project shows one beside its title when it has it. */
+import bumbletapLogo from "./assets/projects/bumbletap.png";
+import hrmsLogo from "./assets/projects/hrms.png";
+import summitEhrLogo from "./assets/projects/summit-ehr.png";
+import lumenLogo from "./assets/projects/lumen.svg";
+
 export const profile = {
   name: "Shahzeb Umer",
   // Deliberately not "Full Stack Developer" here. That is the job title and it
@@ -24,6 +31,7 @@ export const links = {
 export const work = [
   {
     title: "BumbleTap",
+    logo: bumbletapLogo,
     domain: "Browser internals",
     year: "2025",
     summary:
@@ -42,6 +50,7 @@ export const work = [
   },
   {
     title: "Lumen",
+    logo: lumenLogo,
     domain: "Multimodal AI",
     year: "2025",
     summary:
@@ -80,6 +89,7 @@ export const experience = [
     projects: [
       {
         name: "Summit EHR",
+        logo: summitEhrLogo,
         href: "https://summit-ehr.com",
         text: "An AI-native EHR for outpatient clinics, with intake, documentation and follow-up built in.",
       },
@@ -93,6 +103,7 @@ export const experience = [
     projects: [
       {
         name: "HR Management System",
+        logo: hrmsLogo,
         href: "https://hrms.aiou.edu.pk",
         text: "Attendance, payroll, evaluations and the staff lifecycle, with role-based access.",
         parts: [

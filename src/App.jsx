@@ -150,7 +150,18 @@ function Experience() {
             <ul className="mt-6 space-y-5 pl-5 sm:pl-7">
               {job.projects.map((p) => (
                 <li key={p.name}>
-                  <h4 className="t-subheading text-slate-200">
+                  <h4 className="t-subheading flex items-center gap-2 text-slate-200">
+                    {/* Same treatment as a project's logo: em-sized to the
+                        name, decorative, since the name says what it is. */}
+                    {p.logo && (
+                      <img
+                        src={p.logo}
+                        alt=""
+                        width="192"
+                        height="192"
+                        className="size-[1.35em] shrink-0"
+                      />
+                    )}
                     {p.href ? (
                       <Out href={p.href}>
                         {p.name} <Arrow />
@@ -220,7 +231,18 @@ function Projects() {
                 <span className="t-label domain-chip text-teal-300/80">{p.domain}</span>
               </div>
 
-              <h3 className="t-heading mt-2 text-[1.1875rem] text-slate-100 transition-colors duration-300 group-hover:text-teal-300">
+              <h3 className="t-heading mt-2 flex items-center gap-2.5 text-[1.1875rem] text-slate-100 transition-colors duration-300 group-hover:text-teal-300">
+                {/* The logo is sized in em, so it stays the height of the
+                    title it sits beside. Decorative: the title names it. */}
+                {p.logo && (
+                  <img
+                    src={p.logo}
+                    alt=""
+                    width="192"
+                    height="192"
+                    className="size-[1.35em] shrink-0"
+                  />
+                )}
                 {p.title}
               </h3>
 
