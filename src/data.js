@@ -7,7 +7,7 @@ export const profile = {
   tagline: "Simplicity is prerequisite for reliability.",
   email: "umershahzeb@gmail.com",
   about: [
-    "I’m a software engineer at Z360, where I work remotely on Summit EHR, an AI-native health record platform. Before that I shipped public and internal platforms at the Directorate of ICT at Allama Iqbal Open University, for an institution serving 400,000+ students.",
+    "I’m a software engineer at Z360, where I work remotely on Summit EHR, an AI-native health record platform. Before that I shipped platforms and solutions at the Directorate of ICT at Allama Iqbal Open University.",
     "I pick the stack to fit the problem rather than the other way round. So far that has meant browser internals, multimodal AI systems, production platforms at scale, infrastructure, and a fair amount of algorithmic work. The common thread is depth: going as far down as a problem actually requires instead of stopping at the framework.",
     "I write about browser internals, automation and web architecture, and I’m always looking for the next unfamiliar problem.",
   ],
@@ -66,7 +66,9 @@ export const work = [
   },
 ];
 
-/* Newest first. `orgHref` links the employer; a project's `text` is optional. */
+/* Newest first. `orgHref` links the employer; a project's `text` is optional,
+   and `parts` lists work nested under it. Every description stays to a line
+   or two, with no stacks — the detail belongs in a write-up. */
 export const experience = [
   {
     role: "Software Engineer",
@@ -75,7 +77,13 @@ export const experience = [
     period: "Aug 2026 – Present",
     location: "Remote",
     note: "Working on Summit EHR, Z360’s AI-native health record platform.",
-    projects: [{ name: "Summit EHR", href: "https://summit-ehr.com", text: "" }],
+    projects: [
+      {
+        name: "Summit EHR",
+        href: "https://summit-ehr.com",
+        text: "An AI-native EHR for outpatient clinics, with intake, documentation and follow-up built in.",
+      },
+    ],
   },
   {
     role: "Full Stack Developer",
@@ -84,19 +92,25 @@ export const experience = [
     note: "A distance-learning institution serving 400,000+ students nationwide.",
     projects: [
       {
+        name: "HR Management System",
+        href: "https://hrms.aiou.edu.pk",
+        text: "Attendance, payroll, evaluations and the staff lifecycle, with role-based access.",
+        parts: [
+          {
+            name: "Bridge",
+            text: "Our own attendance middleware, free of the vendor’s licence and lock-in.",
+          },
+        ],
+      },
+      {
         name: "Islamic Research Index",
         href: "https://iri.aiou.edu.pk",
-        text: "A Next.js 14 research-indexing platform hosting thousands of academic papers. Query optimisation and caching for page-load performance, and automated content-management workflows that cut manual indexing effort.",
+        text: "A research-indexing platform hosting thousands of academic papers.",
       },
       {
         name: "AIOU Bookstore",
         href: "https://bookstore.aiou.edu.pk",
-        text: "An e-commerce platform with secure payment processing and a modular architecture spanning online sales, POS, warehouse and notifications, with inventory synchronised between the online store and physical outlets.",
-      },
-      {
-        name: "HR Management System",
-        href: null,
-        text: "Node.js/Express and Next.js over PostgreSQL, covering attendance, payroll, evaluations and employee lifecycle, with role-based access control and document storage in cloud object storage.",
+        text: "An e-commerce platform for online sales, POS and warehouse, synced across outlets.",
       },
     ],
   },

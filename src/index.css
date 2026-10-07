@@ -370,6 +370,66 @@
     content: " −";
   }
 
+  /* ----- Experience timeline -----
+     Each role carries its own stretch of the line, from its node down to
+     the next role's, so the line always joins nodes however tall a card
+     grows. Geometry: the node's centre sits level with the card's date
+     line — the card's 1rem padding plus half that line's height. */
+  .timeline-item {
+    --node: 0.5625rem;
+    --node-y: calc(1rem + 0.45rem);
+    position: relative;
+    padding-left: 1.75rem;
+  }
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: calc(var(--node) / 2 - 0.5px);
+    top: var(--node-y);
+    /* Down past this item and the gap (space-y-4) to the next node. */
+    bottom: calc(-1rem - var(--node-y));
+    width: 1px;
+    background-color: --alpha(var(--color-slate-600) / 35%);
+  }
+  /* The last stretch runs on a little and fades: history before this. */
+  .timeline-item:last-child::before {
+    bottom: -2.5rem;
+    background-color: transparent;
+    background-image: linear-gradient(
+      to bottom,
+      --alpha(var(--color-slate-600) / 35%),
+      transparent
+    );
+  }
+  .timeline-item::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: calc(var(--node-y) - var(--node) / 2);
+    width: var(--node);
+    height: var(--node);
+    border-radius: 9999px;
+    border-width: 1.5px;
+    border-style: solid;
+    border-color: var(--color-slate-500);
+    background-color: var(--color-slate-900);
+  }
+  /* The current role: filled in the accent, with a soft halo. */
+  .timeline-item.is-current::after {
+    border-color: var(--color-teal-300);
+    background-color: var(--color-teal-300);
+    box-shadow: 0 0 0 4px --alpha(var(--color-teal-300) / 18%);
+  }
+
+  /* A piece of work nested under a platform in Experience, ruled off on its
+     left in the same faint hairline the blog uses. */
+  .project-part {
+    padding-left: 1rem;
+    border-left-width: 1px;
+    border-left-style: solid;
+    border-left-color: --alpha(var(--color-slate-600) / 30%);
+  }
+
   /* ===== CARDS ===== */
   .card {
     border-radius: 0.75rem;

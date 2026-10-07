@@ -109,30 +109,39 @@ function Experience() {
     <section id="experience" className="scroll-mt-24 pb-24" aria-label="Experience">
       <SectionLabel index="02">Experience</SectionLabel>
 
-      <ol className="space-y-4">
+      {/* A timeline: a hairline down the left, a node level with each role's
+          dates — filled for the current role, hollow for the ones before it —
+          and a tail that fades out below the last, into earlier history. */}
+      <ol className="timeline space-y-4">
         {experience.map((job, i) => (
-          <Reveal as="li" key={job.orgShort} className="card -mx-4 p-4" delay={i * 60}>
-            <p className="t-meta text-slate-500">
-              {job.period}
-              {job.location && ` · ${job.location}`}
-            </p>
-            {/* Role and employer share a line. items-baseline rather than items-center
-                because the two sit at different sizes, and baselines are what the eye
-                reads as level; centring would leave the smaller one floating. */}
-            <div className="mt-2 flex flex-wrap items-baseline gap-x-2">
-              <h3 className="t-heading text-slate-100">{job.role}</h3>
-              {/* Muted so it separates without competing, and aria-hidden so screen
-                  readers do not announce "middle dot" between the two phrases. */}
-              <span className="t-body text-slate-600" aria-hidden="true">·</span>
-              <p className="t-body text-slate-300">
-                {job.orgHref ? (
-                  <Out href={job.orgHref} className="!text-slate-300 hover:!text-teal-300">
-                    {job.orgShort} <Arrow />
-                  </Out>
-                ) : (
-                  job.orgShort
-                )}
+          <Reveal
+            as="li"
+            key={job.orgShort}
+            className={`timeline-item ${job.period.includes("Present") ? "is-current" : ""}`}
+            delay={i * 60}
+          >
+            <div className="card -mx-4 p-4">
+              <p className="t-meta text-slate-500">
+                {job.period}
+                {job.location && ` · ${job.location}`}
               </p>
+              {/* Role and employer share a line. items-baseline rather than items-center
+                  because the two sit at different sizes, and baselines are what the eye
+                  reads as level; centring would leave the smaller one floating. */}
+              <div className="mt-2 flex flex-wrap items-baseline gap-x-2">
+                <h3 className="t-heading text-slate-100">{job.role}</h3>
+                {/* Muted so it separates without competing, and aria-hidden so screen
+                    readers do not announce "middle dot" between the two phrases. */}
+                <span className="t-body text-slate-600" aria-hidden="true">·</span>
+                <p className="t-body text-slate-300">
+                  {job.orgHref ? (
+                    <Out href={job.orgHref} className="!text-slate-300 hover:!text-teal-300">
+                      {job.orgShort} <Arrow />
+                    </Out>
+                  ) : (
+                    job.orgShort
+                  )}
+                </p>
             </div>
             <p className="t-body mt-1 text-sm text-slate-500">{job.note}</p>
 
@@ -154,9 +163,19 @@ function Experience() {
                     )}
                   </h4>
                   {p.text && <p className="t-body mt-1.5 text-slate-400">{p.text}</p>}
+
+                  {/* Work nested under a platform, set off by a hairline rather
+                      than a further indent, and kept to a line or two. */}
+                  {p.parts?.map((part) => (
+                    <div key={part.name} className="project-part mt-4">
+                      <h5 className="t-subheading text-[0.9375rem] text-slate-200">{part.name}</h5>
+                      <p className="t-body mt-1 text-slate-400">{part.text}</p>
+                    </div>
+                  ))}
                 </li>
               ))}
             </ul>
+            </div>
           </Reveal>
         ))}
       </ol>
