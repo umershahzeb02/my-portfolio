@@ -318,6 +318,10 @@ export default function blog({ dir = "content/blog" } = {}) {
             res.setHeader("Content-Type", "application/rss+xml; charset=utf-8");
             return res.end(entry.feed());
           }
+          if (route === "/sitemap.xml") {
+            res.setHeader("Content-Type", "application/xml; charset=utf-8");
+            return res.end(entry.sitemap());
+          }
           if (!isPage(route)) return next();
           // Pages does this redirect for a directory; match it so links agree.
           if (!route.endsWith("/")) {

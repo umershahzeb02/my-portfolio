@@ -11,7 +11,10 @@ export const profile = {
   name: "Shahzeb Umer",
   // Deliberately not "Full Stack Developer" here. That is the job title and it
   // belongs in Experience; as an identity line it binds the whole page to web.
+  // Shown as a quotation, with its author; the quote marks are added where
+  // it is set, so this stays plain text for meta tags.
   tagline: "Simplicity is prerequisite for reliability.",
+  taglineBy: "Dijkstra",
   email: "umershahzeb@gmail.com",
   about: [
     "I’m a software engineer at Z360, where I work remotely on Summit EHR, an AI-native health record platform. Before that I shipped platforms and solutions at the Directorate of ICT at Allama Iqbal Open University.",
@@ -38,7 +41,6 @@ export const work = [
       "A Chrome extension that binds arbitrary keystrokes to DOM actions on any website. Single-key bindings cover element invocation, text entry and sandboxed user JavaScript, while multi-step Auto-Actions add conditional branching, waits and variable extraction.",
     detail:
       "The hard problem is durability. Conventional CSS selectors break the moment a site redeploys, so the element resolver identifies targets by multi-representation consensus and traverses shadow DOM. Privileged execution spans Chrome’s isolated, main and user-script worlds through a cross-world messaging bridge, which buys CORS-exempt requests without giving up a strictly client-side design. No backend, no telemetry.",
-    stack: ["Manifest V3", "JavaScript", "Next.js", "Cloudflare Workers & R2", "Vitest"],
     links: [
       { label: "bumbletap.com", href: "https://bumbletap.com" },
       {
@@ -57,7 +59,6 @@ export const work = [
       "A platform that transcribes, summarises and answers questions about video, using LLM APIs across text, audio and vision.",
     detail:
       "A real-time streaming pipeline over WebSockets emits live progress events, with retry and structured logging wrapped around every external call. The retrieval-augmented question-answering path pulls from a vector store using embedding search and reranking, so answers stay grounded and cite the timestamps they came from.",
-    stack: ["Next.js", "FastAPI", "WebSockets", "Gemini & OpenAI-compatible APIs", "ChromaDB"],
     links: [{ label: "GitHub", href: "https://github.com/umershahzeb02/lumen" }],
   },
   {
@@ -67,7 +68,6 @@ export const work = [
     summary:
       "Converts PDF documents into structured JSON for downstream manipulation in web applications.",
     detail: "",
-    stack: ["JavaScript", "Vercel"],
     links: [
       { label: "Live", href: "https://pdf2json.vercel.app" },
       { label: "GitHub", href: "https://github.com/umershahzeb02/pdf-to-json" },

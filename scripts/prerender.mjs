@@ -12,7 +12,7 @@ const dist = path.join(root, "dist");
 const ssr = path.join(root, "dist-ssr");
 
 const template = await fs.readFile(path.join(dist, "index.html"), "utf8");
-const { routes, renderPage, feed, usesMath } = await import(pathToFileURL(path.join(ssr, "entry-server.js")).href);
+const { routes, renderPage, feed, sitemap, usesMath } = await import(pathToFileURL(path.join(ssr, "entry-server.js")).href);
 
 const write = async (file, contents) => {
   const out = path.join(dist, file);
@@ -28,6 +28,7 @@ for (const route of routes()) {
   await write(file, renderPage(route, template).html);
 }
 await write("blog/rss.xml", feed());
+await write("sitemap.xml", sitemap());
 
 /* KaTeX's stylesheet and fonts, only when some post has maths. woff2 alone:
    it is first in every @font-face list, and every browser that runs this

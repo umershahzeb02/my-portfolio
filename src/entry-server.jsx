@@ -6,7 +6,7 @@ import { renderToString } from "react-dom/server";
 import posts from "virtual:blog";
 import pkg from "../package.json";
 import Page from "./Page";
-import { profile } from "./data";
+import { education, experience, links, profile } from "./data";
 /* The display face's bold — the name and every title. Imported for its URL
    only; the hash matches the file the client build emits from index.css. */
 import displayFont from "computer-modern/fonts/cmu-serif-700-roman.woff2?url";
@@ -25,6 +25,24 @@ const KATEX_CSS = import.meta.env.DEV
   ? `${import.meta.env.BASE_URL}node_modules/katex/dist/katex.min.css`
   : `${import.meta.env.BASE_URL}assets/katex/katex.min.css`;
 export const usesMath = () => posts.some((p) => p.math);
+
+/* Who the site is about, for search engines: a schema.org Person on the
+   home page, so a search for the name can show the right profile. Built from
+   data.js, so it follows the current role without being edited. */
+const person = () => {
+  const [role] = experience;
+  return {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: profile.name,
+    url: SITE,
+    email: `mailto:${profile.email}`,
+    jobTitle: role.role,
+    worksFor: { "@type": "Organization", name: role.orgShort, ...(role.orgHref && { url: role.orgHref }) },
+    alumniOf: education.map((e) => ({ "@type": "EducationalOrganization", name: e.school })),
+    sameAs: [links.github, links.linkedin, links.medium],
+  };
+};
 
 const absolute = (route) => new URL(route.replace(/^\//, ""), SITE).href;
 
@@ -96,6 +114,13 @@ function headTags(route, head = {}) {
     `<meta property="og:title" content="${attr(title)}" />`,
     `<meta property="og:description" content="${attr(description)}" />`,
     `<meta property="og:url" content="${attr(url)}" />`,
+    /* The link-preview card, rendered by render-art.mjs into public/og.png.
+       index.html already asks for a large card; this supplies it. */
+    `<meta property="og:image" content="${attr(absolute("/og.png"))}" />`,
+    `<meta property="og:image:width" content="1200" />`,
+    `<meta property="og:image:height" content="630" />`,
+    `<meta property="og:image:alt" content="${attr(`${NAME} — ${profile.tagline}`)}" />`,
+    `<meta name="twitter:image" content="${attr(absolute("/og.png"))}" />`,
     head.published && `<meta property="article:published_time" content="${head.published}" />`,
     head.modified && `<meta property="article:modified_time" content="${head.modified}" />`,
     /* Computer Modern sets the name and every title, in both themes, and the
@@ -104,6 +129,9 @@ function headTags(route, head = {}) {
        instead of swapping in after. */
     `<link rel="preload" href="${displayFont}" as="font" type="font/woff2" crossorigin />`,
     head.math && `<link rel="stylesheet" href="${KATEX_CSS}" />`,
+    // "<" escaped, so nothing in the data can close the script tag.
+    route === "/" &&
+      `<script type="application/ld+json">${JSON.stringify(person()).replace(/</g, "\\u003c")}</script>`,
     `<link rel="alternate" type="application/rss+xml" title="${attr(NAME)}" href="${attr(absolute("/blog/rss.xml"))}" />`,
   ]
     .filter(Boolean)
@@ -125,6 +153,21 @@ export function renderPage(route, template) {
     .replace("<!--app-html-->", app)
     .replace("<!--app-data-->", `<script id="page-data" type="application/json">${json}</script>`);
   return { status, html };
+}
+
+/* Every public page, for sitemap.xml. A post's lastmod is its updated date,
+   or failing that its date; the index changes when its newest post does. */
+export function sitemap() {
+  const newest = posts[0] && (posts[0].updated ?? posts[0].date);
+  const entries = [
+    { loc: absolute("/") },
+    { loc: absolute("/blog/"), lastmod: newest },
+    ...posts.map((p) => ({ loc: absolute(`/blog/${p.slug}/`), lastmod: p.updated ?? p.date })),
+  ];
+  const urls = entries
+    .map((e) => `  <url>\n    <loc>${e.loc}</loc>${e.lastmod ? `\n    <lastmod>${e.lastmod}</lastmod>` : ""}\n  </url>`)
+    .join("\n");
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
 }
 
 const xml = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

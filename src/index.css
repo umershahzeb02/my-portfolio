@@ -227,9 +227,11 @@
     font-style: italic;          /* a pulled quote is italic on a page */
     letter-spacing: 0;
     line-height: 1.5;
-    /* Overrides the mt-5 utility. CM sets on a tighter body and the name
-       runs at line-height 1.05, so 1.25rem leaves the quote adrift. Pulled
-       up to read as an epigraph belonging to the name. */
+    /* CM sets on a tighter body and the name runs at line-height 1.05, so a
+       full step of space leaves the quote adrift; pulled up, it reads as an
+       epigraph belonging to the name. A margin utility on the element still
+       wins over this — components sit beneath utilities — so the sidebar sets
+       its own gap. */
     margin-top: 0.7rem;
   }
 
@@ -927,6 +929,11 @@
     border-bottom-color: var(--mark-underline-soft);
   }
 
+  /* A line that opens on a quote mark but must not hang it: the desktop
+     sidebar scrolls on its own and clips anything past its edge, so a hung
+     mark (Safari hangs it, from hanging-punctuation on html) was cut off. */
+  .no-hang { hanging-punctuation: none; }
+
   /* A post's opening, centred like a title page. */
   .post-head { text-align: center; }
   .post-rule {
@@ -1137,6 +1144,15 @@
   background-image: url("./assets/hibiscus-light.png");
 }
 
+/* On a phone the flower sits under the fixed theme toggle, so it is drawn
+   a size smaller there, and the sidebar starts lower (App.jsx). */
+@media (width < 64rem) {
+  .motif-name {
+    width: 5.5rem;
+    height: 5.5rem;
+  }
+}
+
 :root:not([data-theme="dark"]) .motif-name {
   opacity: 0.55;
   background-image: url("./assets/hibiscus-light.png");
@@ -1207,10 +1223,13 @@
     transparent 45%
   );
 }
+/* Day's wash. This named --mark-accent, which was never defined, so the
+   gradient was invalid and the light theme had no wash at all; it is the
+   day accent, a shade stronger than night's to show on ivory. */
 :root:not([data-theme="dark"]) .spotlight {
   background: radial-gradient(
     600px circle at var(--mx, -100%) var(--my, -100%),
-    --alpha(var(--mark-accent) / 7%),
+    --alpha(var(--color-teal-300) / 7%),
     transparent 45%
   );
 }

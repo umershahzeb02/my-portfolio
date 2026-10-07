@@ -3,6 +3,7 @@
  *   npm run render:art                 everything
  *   npm run render:art -- ornaments    just the post ornaments
  *   npm run render:art -- flowers      just the hibiscus
+ *   npm run render:art -- og           just the link-preview card
  *
  * Why this exists: p5.brush needs WebGL, so something has to run a browser.
  * But the sketches are seeded, so they produce identical pixels every time —
@@ -52,6 +53,18 @@ const TARGETS = {
       THEMES.map((t) => ({ file: join(ORNAMENTS, `ornament-${n}-${t}.png`), call: `renderOrnament(${n}, ${JSON.stringify(t)})` })),
     ),
     after: writeOrnamentCss,
+  },
+  // The link-preview card. Into public/, not src/assets: it is linked by an
+  // absolute URL from the page's meta tags, so its name must not change.
+  og: {
+    sketch: "og-sketch.js",
+    files: {
+      "/fonts/cmu-serif-700.woff2": join(ROOT, "node_modules/computer-modern/fonts/cmu-serif-700-roman.woff2"),
+      "/fonts/cmu-serif-500-italic.woff2": join(ROOT, "node_modules/computer-modern/fonts/cmu-serif-500-italic.woff2"),
+      "/fonts/cmu-typewriter.woff2": join(ROOT, "node_modules/computer-modern/fonts/cmu-typewriter-text-500-roman.woff2"),
+      "/hibiscus-light.png": join(ASSETS, "hibiscus-light.png"),
+    },
+    jobs: [{ file: join(ROOT, "public", "og.png"), call: "renderOg()" }],
   },
 };
 
@@ -105,6 +118,8 @@ const FILES = {
   "/p5.brush.js": join(ROOT, "node_modules/p5.brush/dist/p5.brush.js"),
   ...Object.fromEntries(selected.map((name) => [`/${TARGETS[name].sketch}`, join(HERE, TARGETS[name].sketch)])),
 };
+// Fonts and images a sketch fetches for itself, served but not run.
+const ASSET_FILES = Object.assign({}, ...selected.map((name) => TARGETS[name].files ?? {}));
 for (const [route, file] of Object.entries(FILES)) {
   if (!existsSync(file)) {
     console.error(`Missing ${file} (for ${route}). Run npm install first.`);
@@ -169,6 +184,11 @@ const server = createServer((req, res) => {
     if (url.pathname === "/") return send(200, "text/html", PAGE);
     const file = FILES[url.pathname];
     if (file) return send(200, "application/javascript", readFileSync(file));
+    const asset = ASSET_FILES[url.pathname];
+    if (asset) {
+      const type = asset.endsWith(".woff2") ? "font/woff2" : asset.endsWith(".png") ? "image/png" : "application/octet-stream";
+      return send(200, type, readFileSync(asset));
+    }
     return send(404, "text/plain", "no");
   }
 
@@ -180,7 +200,7 @@ const server = createServer((req, res) => {
       const buf = Buffer.from(body, "base64");
       writeFileSync(job.file, buf);
       written.add(job);
-      console.log(`  wrote ${job.file.slice(ASSETS.length + 1)}  ${buf.length} bytes`);
+      console.log(`  wrote ${job.file.slice(ROOT.length + 1)}  ${buf.length} bytes`);
     } else if (url.pathname === "/log") {
       console.log("    " + body);
     } else if (url.pathname === "/fail") {
@@ -235,7 +255,7 @@ server.listen(PORT, "127.0.0.1", () => {
       process.exit(1);
     }
     for (const name of selected) TARGETS[name].after?.();
-    console.log(`\ndone — ${written.size} image(s) in src/assets`);
+    console.log(`\ndone — ${written.size} image(s)`);
     process.exit(0);
   });
 });

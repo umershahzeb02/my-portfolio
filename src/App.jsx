@@ -24,7 +24,10 @@ function Sidebar() {
   const active = useActiveSection(NAV_IDS);
 
   return (
-    <header className="sidebar py-12 lg:py-16">
+    <header className="sidebar pt-24 pb-12 lg:py-16">
+      {/* pt-24 below lg, and a smaller flower (index.css): the fixed theme
+          toggle sits over the top-right corner,
+          and the flower at the end of the name ran under it on a phone. */}
       {/* Only the identity sits up top. The name gets its own w-fit wrapper so
           the ornament can be pinned to the END of the text — left:100% of a
           shrink-wrapped box lands just past the final r. On a full-width block
@@ -37,7 +40,14 @@ function Sidebar() {
               nothing to render and nothing to execute. */}
           <div className="motif-name" aria-hidden="true" />
         </div>
-        <p className="t-role mt-5 text-teal-300">{profile.tagline}</p>
+        {/* A quotation, so set as one: curly quotes, and its author beneath
+            in the small mono the site uses for labels. */}
+        <figure className="mt-2">
+          <blockquote className="t-role !mt-0 text-teal-300">
+            <p className="no-hang">“{profile.tagline}”</p>
+          </blockquote>
+          <figcaption className="t-meta mt-1.5 text-slate-500">— {profile.taglineBy}</figcaption>
+        </figure>
       </div>
 
       {/* The nav is its own group between the identity and the contact block,
@@ -65,6 +75,13 @@ function Sidebar() {
                 </a>
               </li>
             ))}
+            {/* The one item that leaves the page, so it says so with an arrow
+                and takes no part in the scroll tracking. */}
+            <li>
+              <a href={href("blog/")} className="nav-item t-label text-slate-500 hover:text-slate-200">
+                Blog →
+              </a>
+            </li>
           </ul>
         </nav>
       </div>
@@ -132,17 +149,21 @@ function Experience() {
                 <h3 className="t-heading text-slate-100">{job.role}</h3>
                 {/* Muted so it separates without competing, and aria-hidden so screen
                     readers do not announce "middle dot" between the two phrases. */}
-                <span className="t-body text-slate-600" aria-hidden="true">·</span>
-                <p className="t-body text-slate-300">
+                {/* On a phone the employer takes its own line and the dot goes:
+                    left to wrap, the dot was stranded at the end of a line. */}
+                <span className="t-body hidden text-slate-600 sm:inline" aria-hidden="true">·</span>
+                <p className="t-body basis-full text-slate-300 sm:basis-auto">
                   {job.orgHref ? (
-                    <Out href={job.orgHref} className="!text-slate-300 hover:!text-teal-300">
+                    // The arrow marks the link, as everywhere else; no prose
+                    // underline on top of it.
+                    <Out href={job.orgHref} className="!text-slate-300 !no-underline hover:!text-teal-300">
                       {job.orgShort} <Arrow />
                     </Out>
                   ) : (
                     job.orgShort
                   )}
                 </p>
-            </div>
+              </div>
             <p className="t-body mt-1 text-sm text-slate-500">{job.note}</p>
 
             {/* Indented so the platforms sit beneath the role rather than beside it.
@@ -249,14 +270,6 @@ function Projects() {
               <p className="t-body mt-2 text-slate-400">{p.summary}</p>
               {p.detail && <p className="t-body mt-2 text-slate-500">{p.detail}</p>}
 
-              <ul className="stack mt-4 flex flex-wrap gap-x-4 gap-y-1.5">
-                {p.stack.map((s) => (
-                  <li key={s} className="t-meta text-teal-300/75">
-                    {s}
-                  </li>
-                ))}
-              </ul>
-
               <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
                 {p.links.map((l) => (
                   <Out key={l.href} href={l.href} className="t-link">
@@ -328,16 +341,16 @@ function Writing({ posts }) {
         ))}
       </ul>
 
-      {posts.length > 0 && (
-        <Reveal className="mt-8 px-4 lg:px-0" delay={80}>
-          <a
-            href={href("blog/")}
-            className="t-link text-slate-200 transition-colors duration-300 hover:text-teal-300"
-          >
-            All posts →
-          </a>
-        </Reveal>
-      )}
+      {/* Always here, posts or not: on a phone the sidebar has no nav, and
+          this is the way to the blog. */}
+      <Reveal className="mt-8 px-4 lg:px-0" delay={80}>
+        <a
+          href={href("blog/")}
+          className="t-link text-slate-200 transition-colors duration-300 hover:text-teal-300"
+        >
+          {posts.length > 0 ? "All posts →" : "Blog →"}
+        </a>
+      </Reveal>
     </section>
   );
 }
